@@ -1,12 +1,16 @@
 #include<iostream>
 #include"mpthread.h"
 #include<pthread.h>
-#include<errno>
+#include<errno.h>
+#include<event.h>
+#include<sys/socket.h>
 using namespace std;
+
+void *pth_run(void *arg);
 
 Mpthread::mpthread(int sock_1)
 {
-	_sock_1 = scok_1;
+	_sock_1 = sock_1;
 	
 	//启动子线程
     pthread_t id;
@@ -57,7 +61,7 @@ void sock_1_cb(int fd,short event,void *arg)
 
 void *pth_run(void *arg)
 {
-	Pmphread mthis = (Pmpthread)arg;
+	Pmpthread mthis = (Pmpthread)arg;
 
 	//mthis->_base = event_base_new();
 	mthis->_base = event_init();
@@ -66,5 +70,5 @@ void *pth_run(void *arg)
     struct event* ev_sock_1 = event_new(mthis->_base,mthis->_sock_1,EV_READ|EV_PERSIST,sock_1_cb,mthis);
 	event_add(ev_sock_1,NULL);
 
-	event_base_dispatch();
+	event_base_dispatch(mthis->_base);
 }

@@ -4,15 +4,16 @@
 
 #include<vector>
 #include<map>
+using namespace std;
 
-typedef class Tcpsever
+typedef class Tcpserver
 {
 	public:
-		Tcpsever(char *ip,unsigned short port,int pth_num);
-		~Tcpsever(){}
+		Tcpserver(char *ip,unsigned short port,int pth_num);
+		~Tcpserver(){}
 		void run();
 		void create_socket_pair();
-		void create_pth();
+		void create_pth(int pth_num);
 
 	private:
 		struct event_base* _base;//libevent

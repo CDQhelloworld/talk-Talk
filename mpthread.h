@@ -3,8 +3,9 @@
 #define MPTHREAD_H
 
 #include<map>
+using namespace std;
 
-typedef class MPthread
+typedef class mpthread
 {
 	public:
 		mpthread(int sock_1);

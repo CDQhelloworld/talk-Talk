@@ -10,11 +10,10 @@
 #include<cstdlib>
 #include<unistd.h>
 #include<event.h>
-#include<thread>
 #include<memory.h>
 using namespace std;
 
-Tcpsever::Tcpsever(char *ip,unsigned short port,int pth_num):_pth_num(pth_num)
+Tcpserver::Tcpserver(char *ip,unsigned short port,int pth_num):_pth_num(pth_num)
 {
 	//创建服务器
 	int sockfd = socket(AF_INET,SOCK_STREAM,0);
@@ -43,16 +42,16 @@ void sock_fd_cb(int fd, short event, void *arg)
 
 }
 
-void Tcpsever::run()
+void Tcpserver::run()
 {
 	//创建socketpair
 	create_socket_pair();
 
 	//启动线程
-	create_pth(int pth_num);
+	create_pth(_pth_num);
 
 	//将监听套接子libevent
-	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PRESIST, sock_fd_cb, NULL);
+	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, NULL);
 
 
 	//循环监听
@@ -60,7 +59,7 @@ void Tcpsever::run()
 
 
 
-void Tcpsever::create_pth(int pth_num)
+void Tcpserver::create_pth(int pth_num)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
@@ -81,7 +80,7 @@ void sock_0_cb(int fd,short event,void* arg)
 	(*p_pth_num_map)[fd] = num;
 }
 
-void Tcpsever::create_socket_pair()
+void Tcpserver::create_socket_pair()
 {
 	//申请
 	for(int i = 0; i < _pth_num;i++)

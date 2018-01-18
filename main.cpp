@@ -36,7 +36,7 @@ int main(int argc,char **argv)
     cout<<"pth_num="<<pth_num<<endl;
 
 	//构造服务器对象
-	Tcpsever ser(ip,port,pth_num);
+	Tcpserver ser(ip,port,pth_num);
 
 	//运行服务器
 	ser.run();

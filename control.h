@@ -4,6 +4,7 @@
 
 #include <map>
 #include "view.h"
+using namespace std;
 
 typedef class control
 {
