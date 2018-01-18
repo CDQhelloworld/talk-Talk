@@ -22,8 +22,12 @@ Mpthread::mpthread(int sock_1)
 void cli_cb(int fd,short event,void* arg)
 {
 	//recv   ->buff
-	
-	//buff->contral      
+	char buff[1024] = {0};
+	while((recv(fd, buff, sizeof(buff), 0))>0)
+	{
+		//buff->contral 
+	}
+	     
 }
 
 
@@ -31,7 +35,7 @@ void cli_cb(int fd,short event,void* arg)
 void sock_1_cb(int fd,short event,void *arg)
 {
 	//强转
-    Pmpthread mthis = (Pmpthread)arg;
+	Pmpthread mthis = (Pmpthread)arg;
 
 	//recv   cli_fd
     char buff[8] = {0};
@@ -46,7 +50,8 @@ void sock_1_cb(int fd,short event,void *arg)
     mthis->_event_map.insert(make_pair(cli_fd,ev_cli));
     
 	//send(fd,      _event_map.size(),)
-    
+	int mapsize = mthis->_event_map.size();
+	send(mthis->_sock_1, &mapsize, sizeof(int), 0);
 }
 
 

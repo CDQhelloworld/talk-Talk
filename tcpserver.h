@@ -1,8 +1,9 @@
-#include<iostream>
+#pragma once
+#ifndef TCPSERVER_H
+#define TCPSERVER_H
+
 #include<vector>
 #include<map>
-#include<errno.h>
-using namespace std;
 
 typedef class Tcpsever
 {
@@ -28,6 +29,6 @@ typedef class Tcpsever
                 sockfd[1] = fd[1];
             }
         }pair,*pPair;
-		//vector<int[2]> _sockpair_base;//socketpair
         vector<myPair> _socket_pair_base;
 }tcpsever,*pTcpsever;
+#endif // !TCPSERVER_H

@@ -6,6 +6,7 @@
 #include<sys/socket.h>
 #include<arpa/inet.h>
 #include<pthread.h>
+#include"mpthread.h"
 #include<cstdlib>
 #include<unistd.h>
 #include<event.h>
@@ -37,6 +38,11 @@ Tcpsever::Tcpsever(char *ip,unsigned short port,int pth_num):_pth_num(pth_num)
 	_base = event_init();
 }
 
+void sock_fd_cb(int fd, short event, void *arg)
+{
+
+}
+
 void Tcpsever::run()
 {
 	//创建socketpair
@@ -46,21 +52,19 @@ void Tcpsever::run()
 	create_pth(int pth_num);
 
 	//将监听套接子libevent
-	
+	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PRESIST, sock_fd_cb, NULL);
+
 
 	//循环监听
 }
 
-void threadfun()
-{
 
-}
 
 void Tcpsever::create_pth(int pth_num)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
-		thread(threadfun());
+		Mpthread th(_socket_pair_base[0].sockfd[1]);
 	}
 }
 
@@ -99,8 +103,5 @@ void Tcpsever::create_socket_pair()
 		//将socketpair0端加入到libevent
 		struct event* ev_sock_child = event_new(_base,sock_child[0],EV_READ|EV_PERSIST,sock_0_cb,&_pth_num_map);
 		event_add(ev_sock_child,NULL);
-
-		//启动循环监听  event_dispatch();
-        event_base_dispatch(_base);
 	}
 }
