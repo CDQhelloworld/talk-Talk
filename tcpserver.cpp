@@ -9,6 +9,7 @@
 #include<cstdlib>
 #include<unistd.h>
 #include<event.h>
+#include<thread>
 #include<memory.h>
 using namespace std;
 
@@ -42,7 +43,7 @@ void Tcpsever::run()
 	create_socket_pair();
 
 	//启动线程
-//	create_pth();
+	create_pth(int pth_num);
 
 	//将监听套接子libevent
 	
@@ -50,7 +51,18 @@ void Tcpsever::run()
 	//循环监听
 }
 
+void threadfun()
+{
 
+}
+
+void Tcpsever::create_pth(int pth_num)
+{
+	for(int i = 0;i<pth_num;++i)
+	{
+		thread(threadfun());
+	}
+}
 
 void sock_0_cb(int fd,short event,void* arg)
 {
