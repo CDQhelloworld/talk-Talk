@@ -39,7 +39,32 @@ Tcpserver::Tcpserver(char *ip,unsigned short port,int pth_num):_pth_num(pth_num)
 
 void sock_fd_cb(int fd, short event, void *arg)
 {
+	//拿到客户端套接字
+	struct sockaddr_in caddr;
+	int len = sizeof(caddr);
+	int cli_fd = accept(fd, (struct sockaddr *)&caddr, &len);
 
+	//调查map表拿最小访问量的子线程套接字
+	pTcpsever mthis = (pTcpsever)arg;
+	typedef map<unsigned, unsigned>::iterator iterator;
+	iterator ser_mapit = mthis->_pth_num_map.begin();
+	int minIndex = (*ser_mapit).first;
+	int min = (*ser_mapit).second;
+	++ser_mapit;  //少比较一次
+	for(;ser_mapit != mthis->_pth_num_map.end(); ++ser_mapit)
+	{
+		if((*ser_mapit).second < min)
+		{
+			minIndex = (*ser_mapit).first;
+			min = (*ser_mapit).second;
+		}
+	}
+
+	//给子线程发送
+	if(-1 == (send(minIndex, (char *)&cli_fd, sizeof(int), 0))
+	{
+		cerr << "send cli_fd to pthread error:" << errrno << endl;
+	}
 }
 
 void Tcpserver::run()
@@ -53,8 +78,8 @@ void Tcpserver::run()
 	//将监听套接子libevent
 	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, NULL);
 
-
 	//循环监听
+	event_base_dispatch(_base);
 }
 
 

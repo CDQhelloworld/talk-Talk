@@ -23,6 +23,7 @@ Mpthread::mpthread(int sock_1)
 	//->pth_run(this)
 }
 
+//遗留项
 void cli_cb(int fd,short event,void* arg)
 {
 	//recv   ->buff

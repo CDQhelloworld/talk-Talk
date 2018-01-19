@@ -31,5 +31,6 @@ typedef class Tcpserver
             }
         }pair,*pPair;
         vector<myPair> _socket_pair_base;
+		friend void sock_fd_cb(int fd, short event, void *arg);
 }tcpsever,*pTcpsever;
 #endif // !TCPSERVER_H
