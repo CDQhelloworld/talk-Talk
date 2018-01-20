@@ -4,6 +4,7 @@
 #include<errno.h>
 #include<event.h>
 #include<sys/socket.h>
+#include"control.h"
 using namespace std;
 
 void *pth_run(void *arg);
@@ -26,11 +27,15 @@ Mpthread::mpthread(int sock_1)
 //遗留项
 void cli_cb(int fd,short event,void* arg)
 {
+	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
-	while((recv(fd, buff, sizeof(buff), 0))>0)
+	int len = recv(fd, buff, sizeof(buff), 0);
+	while(size)
 	{
 		//buff->contral 
+		string mess(buff);
+		mthis->_control.handle(buff, fd)
 	}
 	     
 }
@@ -48,7 +53,7 @@ void sock_1_cb(int fd,short event,void *arg)
     int cli_fd = (int)buff;
 
 	//将cli_fd加入libevent  -》cli_cb()
-	struct event* ev_cli = event_new(mthis->_base,cli_fd,EV_READ|EV_PERSIST,cli_cb,NULL);
+	struct event* ev_cli = event_new(mthis->_base,cli_fd,EV_READ|EV_PERSIST,cli_cb,mthis);
     event_add(ev_cli,NULL);
 
 	//将事件加入到_event_map

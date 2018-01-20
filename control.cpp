@@ -3,15 +3,18 @@
 #include "public.h"
 #include <json/json.h>
 #include "view_login.h"
+#include "view_exit.h"
+#include "view_register.h"
+#include "view_talk_one.h"
 #include <errno.h>
 using namespace std;
 
 Control::control()
 {
-	_map.insert(make_pair(MSG_TYPE_REGISTER, new view_login()));
+	_map.insert(make_pair(MSG_TYPE_REGISTER, new view_register()));
 	_map.insert(make_pair(MSG_TYPE_LOGIN, new view_login()));
-	_map.insert(make_pair(MSG_TYPE_EXIT, new view_login()));
-	_map.insert(make_pair(MSG_TYPE_TALK_ONE, new view_login()));
+	_map.insert(make_pair(MSG_TYPE_EXIT, new view_exit()));
+	_map.insert(make_pair(MSG_TYPE_TALK_ONE, new view_talk_one()));
 
 	//一次连接，终身受益
 	mpcon = mysql_init((MYSQL *)0);

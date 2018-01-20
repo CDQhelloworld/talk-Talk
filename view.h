@@ -2,6 +2,8 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+#include <mysql/mysql.h>
+
 class view
 {
 public:

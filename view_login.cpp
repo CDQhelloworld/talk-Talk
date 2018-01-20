@@ -2,6 +2,8 @@
 #include<iostream>
 #include<mysql/mysql.h>
 #include<string>
+#include<string.h>
+#include<json/json.h>
 using namespace std;
 
 view_login::view_login(MYSQL *mpcon)
@@ -97,7 +99,13 @@ void view_login::responce()
 	if(flag)
 	{
 		//登陆成功
-		char buff[] = "登陆成功！！！！！";
+		char buff[1024] = "登陆成功！";
+		if(_message.length != 0)
+		{
+			strcat(buff, "[");
+			strcat(buff, _message);
+			strcat(buff, "]");
+		}
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 	else
