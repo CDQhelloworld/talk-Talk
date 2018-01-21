@@ -4,6 +4,7 @@
 
 #include "view.h"
 #include <string>
+#include <mysql/mysql.h>
 
 class view_exit: public view
 {
@@ -16,6 +17,7 @@ private:
 	string _message;
 	int _cli_fd;
 	bool _flag;
+    MYSQL *_mpcon;
 };
 
 #endif // !VIEW_EXIT_H

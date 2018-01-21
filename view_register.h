@@ -10,12 +10,13 @@ class view_register: public view
 public:
 	view_register(MYSQL *mpcon);
 	~view_register(){}
-	void process(Json::Value val, int cli_fd);
-	void responce();
+	virtual void process(Json::Value val, int cli_fd);
+	virtual void responce();
 private:
 	string _message;
 	int _cli_fd;
 	bool _flag;
+    MYSQL *_mpcon;
 };
 
 #endif // !VIEW_REGISTER_H

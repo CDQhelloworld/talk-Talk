@@ -3,9 +3,9 @@
 #include <string>
 using namespace std;
 
-view_register::view_register(MYSQL *mpcon)
+view_register::view_register(MYSQL *mpcon):view()
 {
-	this->mpcon = mpcon;
+	_mpcon = mpcon;
 }
 
 void view_register::process(Json::Value val, int cli_fd)
@@ -16,7 +16,6 @@ void view_register::process(Json::Value val, int cli_fd)
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
 
-	//进入user表中查找重名，如果没有则添加进user表中
 	if(mysql_select_db(mpcon, "user"))
 	{
 		cerr << "select fail：errno：" << errno << endl;

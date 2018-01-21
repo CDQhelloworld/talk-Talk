@@ -3,6 +3,7 @@
 #define VIEW_TALK_ONE_H
 
 #include "view.h"
+#include <mysql/mysql.h>
 #include <string>
 
 class view_talk_one: public view
@@ -16,6 +17,7 @@ private:
 	string _message;
 	int _cli_fd;
 	bool _flag;
+    MYSQL *_mpcon;
 };
 
 #endif // !VIEW_TALK_ONE_H

@@ -16,7 +16,6 @@ public:
 	void handle(char *buff, int cli_fd);
 private:
     map<int,view*> _map;//model
-    MYSQL *_mpcon;
 }Control,*PControl;
 
 #endif

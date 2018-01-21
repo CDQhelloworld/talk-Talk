@@ -9,7 +9,7 @@ using namespace std;
 
 view_login::view_login(MYSQL *mpcon)
 {
-	this->mpcon = mpcon;
+	_mpcon = mpcon;
 }
 
 void view_login::process(Json::Value val, int cli_fd)
