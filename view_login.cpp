@@ -1,4 +1,5 @@
 #include"view_login.h"
+#include"view.h"
 #include<iostream>
 #include<mysql/mysql.h>
 #include<string>
@@ -19,10 +20,10 @@ void view_login::process(Json::Value val, int cli_fd)
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
 
-	//·ÃÎÊusr±í
+	//è®¿é—®usrè¡¨
 	if(mysql_select_db(mpcon, "user"))
 	{
-		cerr << "select fail£ºerrno£º" << errno << endl;
+		cerr << "select failï¼šerrnoï¼š" << errno << endl;
 		return 0;
 	}
 
@@ -45,15 +46,15 @@ void view_login::process(Json::Value val, int cli_fd)
 	mp_row = mysql_fetch_row(mp_res);
 	if(strcmp(val["pw"], row[2]) != 0)
 	{
-		//ÃÜÂë±È¶Ô²»ÉÏ
+		//å¯†ç æ¯”å¯¹ä¸ä¸Š
 		_flag = false;
 		return;
 	}
 
-	//·ÃÎÊoffline
+	//è®¿é—®offline
 	if(mysql_select_db(mpcon, "offline"))
 	{
-		cerr << "select fail£ºerrno£º" << errno << endl;
+		cerr << "select failï¼šerrnoï¼š" << errno << endl;
 		return 0;
 	}
 
@@ -68,10 +69,10 @@ void view_login::process(Json::Value val, int cli_fd)
 	cmd.insert(cmd.length - 2, val["name"].asString());
 	mp_res = mysql_store_result(mpcon);
 
-	//·ÃÎÊonline
+	//è®¿é—®online
 	if(mysql_select_db(mpcon, "online"))
 	{
-		cerr << "select fail£ºerrno£º" << errno << endl;
+		cerr << "select failï¼šerrnoï¼š" << errno << endl;
 		return;
 	}
 
@@ -98,8 +99,8 @@ void view_login::responce()
 {
 	if(flag)
 	{
-		//µÇÂ½³É¹¦
-		char buff[1024] = "µÇÂ½³É¹¦£¡";
+		//ç™»é™†æˆåŠŸ
+		char buff[1024] = "ç™»é™†æˆåŠŸï¼";
 		if(_message.length != 0)
 		{
 			strcat(buff, "[");
@@ -110,8 +111,8 @@ void view_login::responce()
 	}
 	else
 	{
-		//µÇÂ½Ê§°Ü
-		char buff[] = "µÇÂ½Ê§°Ü£¬ÊäÈëÃÜÂë´íÎó»òÕËºÅÔÚÒìµØµÇÂ½";
+		//ç™»é™†å¤±è´¥
+		char buff[] = "ç™»é™†å¤±è´¥ï¼Œè¾“å…¥å¯†ç é”™è¯¯æˆ–è´¦å·åœ¨å¼‚åœ°ç™»é™†";
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 	//send(string     _cli_fd);

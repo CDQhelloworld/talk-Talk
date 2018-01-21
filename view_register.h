@@ -15,7 +15,6 @@ public:
 private:
 	string _message;
 	int _cli_fd;
-	MYSQL *mpcon;
 	bool _flag;
 };
 
