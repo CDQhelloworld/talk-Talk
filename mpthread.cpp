@@ -31,11 +31,11 @@ void cli_cb(int fd,short event,void* arg)
 	//recv   ->buff
 	char buff[1024] = {0};
 	int len = recv(fd, buff, sizeof(buff), 0);
-	while(size)
+	while(len > 0)
 	{
 		//buff->contral 
 		string mess(buff);
-		mthis->_control.handle(buff, fd)
+		mthis->_control.handle(buff, fd);
 	}
 	     
 }

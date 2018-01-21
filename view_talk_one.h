@@ -1,6 +1,6 @@
 #pragma once
 #ifndef VIEW_TALK_ONE_H
-#ifndef VIEW_TALK_ONE_H
+#define VIEW_TALK_ONE_H
 
 #include "view.h"
 #include <string>

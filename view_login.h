@@ -6,7 +6,7 @@
 #include <string>
 #include <mysql/mysql.h>
 
-class view_login() : public view
+class view_login : public view
 {
 public:
 	view_login(MYSQL *mpcon);
@@ -15,7 +15,6 @@ public:
 	void responce();
 private:
 	string _message;
-	MYSQL *mpcon;
 	int _cli_fd;
 	bool _flag;
 };

@@ -16,13 +16,11 @@ Control::control()
 	_map.insert(make_pair(MSG_TYPE_EXIT, new view_exit()));
 	_map.insert(make_pair(MSG_TYPE_TALK_ONE, new view_talk_one()));
 
-	//一次连接，终身受益
-	mpcon = mysql_init((MYSQL *)0);
-	//连接mysql            数据库指针  ip  数据库名    密码       端口号
+	_mpcon = mysql_init((MYSQL *)0);
 	if(!mysql_real_connect(mpcon, "127.0.0.1", "root", "970808", NULL, 3306, NULL, 0))
 	{
 		cerr << "sql connect fail;errno:" << errno << endl;
-		return 0;
+		return;
 	}
 }
 
@@ -44,6 +42,6 @@ void Control::handle(char *buff, int cli_fd)
 		cerr << "Json read error:" << errno << endl;
 	}
 
-	_map[root["type"].asInt()]->process(root, cli_fd， MYSQL *mpcon);
+	_map[root["type"].asInt()]->process(root, cli_fd, _mpcon);
 	_map[root["type"].asInt()]->responce();
 }

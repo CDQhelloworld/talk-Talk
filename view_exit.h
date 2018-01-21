@@ -1,6 +1,6 @@
 #pragma once
 #ifndef VIEW_EXIT_H
-#ifndef VIEW_EXIT_H
+#define VIEW_EXIT_H
 
 #include "view.h"
 #include <string>

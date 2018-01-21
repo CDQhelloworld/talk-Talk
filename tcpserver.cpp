@@ -5,6 +5,7 @@
 #include"tcpserver.h"
 #include<sys/socket.h>
 #include<arpa/inet.h>
+#include<sys/stat.h>
 #include<pthread.h>
 #include"mpthread.h"
 #include<cstdlib>
@@ -42,7 +43,7 @@ void sock_fd_cb(int fd, short event, void *arg)
 	//拿到客户端套接字
 	struct sockaddr_in caddr;
 	int len = sizeof(caddr);
-	int cli_fd = accept(fd, (struct sockaddr *)&caddr, &len);
+	int cli_fd = accept(fd, (struct sockaddr *)&caddr, (socklen_t*)&len);
 
 	//调查map表拿最小访问量的子线程套接字
 	pTcpsever mthis = (pTcpsever)arg;
@@ -61,9 +62,9 @@ void sock_fd_cb(int fd, short event, void *arg)
 	}
 
 	//给子线程发送
-	if(-1 == (send(minIndex, (char *)&cli_fd, sizeof(int), 0))
+	if(-1 == (send(minIndex, (char *)&cli_fd, sizeof(int), 0)))
 	{
-		cerr << "send cli_fd to pthread error:" << errrno << endl;
+		cerr << "send cli_fd to pthread error:" << errno << endl;
 	}
 }
 

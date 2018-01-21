@@ -4,6 +4,7 @@
 
 #include <map>
 #include "view.h"
+#include <mysql/mysql.h>
 using namespace std;
 
 typedef class control
@@ -12,9 +13,10 @@ public:
     control();
     ~control();
 
-	void handle(char *buff, int cli_fd);
+	void handle(char *buff, int cli_fd, MYSQL *mpcon);
 private:
     map<int,view*> _map;//model
+    MYSQL *_mpcon;
 }Control,*PControl;
 
 #endif
