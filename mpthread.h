@@ -10,7 +10,7 @@ typedef class mpthread
 {
 	public:
 		mpthread(int sock_1);
-		~mpthread();
+		~mpthread(){}
 
 	private:
 		int _sock_1;///socketpair1

@@ -5,11 +5,12 @@
 #include "view.h"
 #include <string>
 #include <mysql/mysql.h>
+using namespace std;
 
 class view_exit: public view
 {
 public:
-	view_exit(MYSQL *mpcon);
+	view_exit(void *mpcon);
 	~view_exit(){};
 	void process(Json::Value value, int cli_fd);
 	void responce();

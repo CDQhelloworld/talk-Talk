@@ -2,15 +2,19 @@
 #include"view.h"
 #include<iostream>
 #include<mysql/mysql.h>
+#include<stdio.h>
 #include<string>
 #include<errno.h>
 #include<string.h>
+#include<stdlib.h>
 #include<json/json.h>
+#include<sys/socket.h>
+#include<stdlib.h>
 using namespace std;
 
-view_login::view_login(MYSQL *mpcon)
+view_login::view_login(void *mpcon)
 {
-	_mpcon = mpcon;
+	_mpcon = (MYSQL *)mpcon;
 }
 
 void view_login::process(Json::Value val, int cli_fd)
@@ -28,25 +32,24 @@ void view_login::process(Json::Value val, int cli_fd)
 		return;
 	}
 
-
+    /*
 	char cmd[64] = "SELECT * FORM USER WHERE NAME='";
 	strcat((cmd + strlen(cmd) - 2), val["name"].asString());
 	strcat(cmd + strlen(cmd) - 2), "'\0");
-
-    /*
-	string cmd ("SELECT * FORM user WHERE NAME=''");
-	cmd.insert(cmd.length - 2, val["name"].asString());
     */
+    
+	string cmd ("SELECT * FORM user WHERE NAME='';");
+	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 
-	if(mysql_real_query(mpcon, cmd, strlen(cmd)))
+	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
 		cerr << "0 query fail;errno:" << errno << endl;
-		return 0;
+		return;
 	}
 
 	mp_res = mysql_store_result(mpcon);
 	mp_row = mysql_fetch_row(mp_res);
-	if(strcmp(val["pw"], row[2]) != 0)
+	if(strcmp(val["pw"].asString().c_str(), mp_row[2]) != 0)
 	{
 		//密码比对不上
 		_flag = false;
@@ -57,18 +60,18 @@ void view_login::process(Json::Value val, int cli_fd)
 	if(mysql_select_db(mpcon, "offline"))
 	{
 		cerr << "select fail：errno：" << errno << endl;
-		return 0;
+		return;
 	}
 
-	cmd = "SELECT * FORM offline WHERE NAME=''";
-	cmd.insert(cmd.length - 2, val["name"].asString());
+	cmd = "SELECT * FORM offline WHERE NAME='';";
+	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 
 	mp_res = mysql_store_result(mpcon);
 	mp_row = mysql_fetch_row(mp_res);
 	_message = mp_row[2];
 
-	cmd = "DELETE FORM offline WHERE NAME=''";
-	cmd.insert(cmd.length - 2, val["name"].asString());
+	cmd = "DELETE FORM offline WHERE NAME='';";
+	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 	mp_res = mysql_store_result(mpcon);
 
 	//访问online
@@ -78,35 +81,37 @@ void view_login::process(Json::Value val, int cli_fd)
 		return;
 	}
 
-	cmd = "SELECT * FORM online WHERE NAME=''";
-	cmd.insert(cmd.length - 2, val["name"].asString());
+	cmd = "SELECT * FORM online WHERE NAME='';";
+	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 
 	mp_res = mysql_store_result(mpcon);
 	mp_row = mysql_fetch_row(mp_res);
-	if(strcmp(val["name"], mp_row[2]) != 0)
+	if(strcmp(val["name"].asString().c_str(), mp_row[2]) != 0)
 	{
-		flag = false;
+		_flag = false;
 		return;
 	}
 
-	cmd = "INSERT INTO online VALUES('','')";
-	cmd.insert(cmd.length - 3, val["name"].asString());
+	cmd = "INSERT INTO online VALUES('','');";
+	cmd.insert(cmd.size() - 6, val["name"].asString().c_str());
 	char buff[sizeof(int)] = {0};
-	cmd.insert(cmd.length - 3, itoa(cli_fd, buff, 10));
+    sprintf(buff,"%d",cli_fd);
+	cmd.insert(cmd.size() - 3, buff);
 	
 	mp_res = mysql_store_result(mpcon);
 }
 
 void view_login::responce()
 {
-	if(flag)
+	if(_flag)
 	{
 		//登陆成功
+        //遗留 buff放满了 】怎么办
 		char buff[1024] = "登陆成功！";
-		if(_message.length != 0)
+		if(_message.size() != 0)
 		{
 			strcat(buff, "[");
-			strcat(buff, _message);
+			strcat(buff, _message.c_str());
 			strcat(buff, "]");
 		}
 		send(_cli_fd, buff, strlen(buff), 0);

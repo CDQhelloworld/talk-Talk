@@ -8,7 +8,6 @@
 #include "view_talk_one.h"
 #include <errno.h>
 #include <mysql/mysql.h>
-#include "public.h"
 using namespace std;
 
 Control::control()

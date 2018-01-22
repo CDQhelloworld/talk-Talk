@@ -3,7 +3,7 @@
 #include <mysql/mysql.h>
 using namespace std;
 
-view_exit::view_exit(MYSQL *mpcon)
+view_exit::view_exit(void *mpcon)
 {
-    _mpcon = mpcon;
+    _mpcon = (MYSQL *)mpcon;
 }
