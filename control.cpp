@@ -8,6 +8,7 @@
 #include "view_talk_one.h"
 #include <errno.h>
 #include <mysql/mysql.h>
+#include "public.h"
 using namespace std;
 
 Control::control()
@@ -26,13 +27,15 @@ Control::control()
 
 }
 
+/*
 Control::~control()
 {
 	for(int i = 1; i <= _map.size(); ++i)
 	{
-		delete _map[i].second;
+		delete (*_map[i].second);
 	}
 }
+*/
 
 void Control::handle(char *buff, int cli_fd)
 {
@@ -44,6 +47,6 @@ void Control::handle(char *buff, int cli_fd)
 		cerr << "Json read error:" << errno << endl;
 	}
 
-	_map[root["type"].asInt()]->process(root, cli_fd, _mpcon);
+	_map[root["type"].asInt()]->process(root, cli_fd);
 	_map[root["type"].asInt()]->responce();
 }

@@ -3,6 +3,7 @@
 #include<iostream>
 #include<mysql/mysql.h>
 #include<string>
+#include<errno.h>
 #include<string.h>
 #include<json/json.h>
 using namespace std;
@@ -16,7 +17,7 @@ void view_login::process(Json::Value val, int cli_fd)
 {
 	_cli_fd = cli_fd;
 	
-	MYSQL *mpcon = this->mpcon;
+	MYSQL *mpcon = this->_mpcon;
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
 
@@ -24,17 +25,18 @@ void view_login::process(Json::Value val, int cli_fd)
 	if(mysql_select_db(mpcon, "user"))
 	{
 		cerr << "select fail：errno：" << errno << endl;
-		return 0;
+		return;
 	}
 
 
-	/*char cmd[64] = "SELECT * FORM USER WHERE NAME='";
+	char cmd[64] = "SELECT * FORM USER WHERE NAME='";
 	strcat((cmd + strlen(cmd) - 2), val["name"].asString());
-	strcat(cmd + strlen(cmd) - 2), "'\0");*/
+	strcat(cmd + strlen(cmd) - 2), "'\0");
 
-	string cmd = "SELECT * FORM user WHERE NAME=''";
+    /*
+	string cmd ("SELECT * FORM user WHERE NAME=''");
 	cmd.insert(cmd.length - 2, val["name"].asString());
-
+    */
 
 	if(mysql_real_query(mpcon, cmd, strlen(cmd)))
 	{

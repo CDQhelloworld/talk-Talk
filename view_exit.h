@@ -9,7 +9,7 @@
 class view_exit: public view
 {
 public:
-	view_exit();
+	view_exit(MYSQL *mpcon);
 	~view_exit(){};
 	void process(Json::Value value, int cli_fd);
 	void responce();

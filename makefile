@@ -1,5 +1,5 @@
 server_main : main.o tcpserver.o mpthread.o control.o view_login.o
-	g++ -o server_main main.o tcpserver.o mpthread.o control.o view_login.o -levent -ljson
+	g++ -o server_main main.o tcpserver.o mpthread.o control.o view_login.o -levent -ljson -lpthread -lmysqlclient
 
 main.o : main.cpp tcpserver.h
 	g++ -c main.cpp

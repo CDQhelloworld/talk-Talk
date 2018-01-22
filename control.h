@@ -11,7 +11,7 @@ typedef class control
 {
 public:
     control();
-    ~control();
+    //~control();
 
 	void handle(char *buff, int cli_fd);
 private:

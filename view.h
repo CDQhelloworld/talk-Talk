@@ -3,11 +3,12 @@
 #define VIEW_H
 
 #include <mysql/mysql.h>
+#include <json/json.h>
 
 class view
 {
 public:
-	virtual void process() = 0;
+	virtual void process(Json::Value val, int cli_fd) = 0;
 	virtual void responce() = 0;
 };
 

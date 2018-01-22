@@ -5,6 +5,7 @@
 #include "view.h"
 #include <string>
 #include <mysql/mysql.h>
+using namespace std;
 
 class view_login : public view
 {
