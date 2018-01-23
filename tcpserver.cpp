@@ -89,7 +89,7 @@ void Tcpserver::create_pth(int pth_num)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
-		Mpthread th(_socket_pair_base[0].sockfd[1]);
+		new Mpthread th(_socket_pair_base[0].sockfd[1]);
 	}
 }
 
