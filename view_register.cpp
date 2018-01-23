@@ -27,7 +27,7 @@ void view_register::process(Json::Value val, int cli_fd)
 
 	string cmd = "SELECT * FROM user WHEN NAME='';";
 	cmd.insert(cmd.size() - 2, val["name"].asString());
-	if(mysql_real_quary(mpcon, cmd.c_str(), strlen(cmd.c_str()))
+	if(mysql_real_quary(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
 		cerr << "0 query fail;error:" << errno << endl;
 		return;
