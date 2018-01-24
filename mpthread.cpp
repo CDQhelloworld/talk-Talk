@@ -32,7 +32,6 @@ void cli_cb(int fd,short event,void* arg)
 	while((recv(fd, buff, sizeof(buff)/sizeof(buff[0]), 0)) > 0)
 	{
 		//buff->contral 
-		string mess(buff);
 		mthis->_control.handle(buff, fd);
 	}
 	     
@@ -46,9 +45,8 @@ void sock_1_cb(int fd,short event,void *arg)
 	Pmpthread mthis = (Pmpthread)arg;
 
 	//recv   cli_fd
-    char buff[8] = {0};
-	recv(fd,buff,sizeof(buff),0);
-    int cli_fd = (int)buff;
+    int cli_fd;
+	recv(fd,&cli_fd,sizeof(int),0);
 
 	//将cli_fd加入libevent  -》cli_cb()
 	struct event* ev_cli = event_new(mthis->_base,cli_fd,EV_READ|EV_PERSIST,cli_cb,mthis);

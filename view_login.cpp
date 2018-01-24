@@ -25,14 +25,14 @@ void view_login::process(Json::Value val, int cli_fd)
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
 
-	//访问usr表
-	if(mysql_select_db(mpcon, "user"))
+	if(mysql_select_db(mpcon, "talk"))
 	{
 		cerr << "select fail：errno：" << errno << endl;
 		return;
 	}	
     
-	string cmd ("SELECT * FORM user WHERE NAME='';");
+	//访问usr表
+	string cmd ("SELECT * FROM user WHERE NAME='';");
 	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
@@ -42,7 +42,13 @@ void view_login::process(Json::Value val, int cli_fd)
 
 	mp_res = mysql_store_result(mpcon);
 	mp_row = mysql_fetch_row(mp_res);
-	if(mp_row == 0 || strcmp(val["pw"].asString().c_str(), mp_row[2]) != 0)
+    if(mp_row == 0)
+    {
+        //没有这个用户
+        _flag = false;
+        return;
+    }
+	if(strcmp(val["pw"].asString().c_str(), mp_row[1]) != 0)
 	{
 		//密码比对不上
 		_flag = false;
@@ -50,13 +56,7 @@ void view_login::process(Json::Value val, int cli_fd)
 	}
 
 	//访问online
-	if(mysql_select_db(mpcon, "online"))
-	{
-		cerr << "select fail：errno：" << errno << endl;
-		return;
-	}
-
-	cmd = "SELECT * FORM online WHERE NAME='';";
+	cmd = "SELECT * FROM online WHERE NAME='';";
 	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
@@ -66,17 +66,19 @@ void view_login::process(Json::Value val, int cli_fd)
 
 	mp_res = mysql_store_result(mpcon);
 	mp_row = mysql_fetch_row(mp_res);
-	if(strcmp(val["name"].asString().c_str(), mp_row[2]) != 0)
+
+	if(mp_row != 0 && strcmp(val["name"].asString().c_str(), mp_row[1]) == 0)
 	{
 		_flag = false;
 		return;
 	}
 
 	cmd = "INSERT INTO online VALUES('','');";
-	cmd.insert(cmd.size() - 6, val["name"].asString().c_str());
 	char buff[sizeof(int)] = {0};
 	sprintf(buff, "%d", cli_fd);
-	cmd.insert(cmd.size() - 3, buff);
+	cmd.insert(cmd.size() - 6, buff);
+	cmd.insert(cmd.size() - 3, val["name"].asString().c_str());
+
 	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
 		cerr << "0 query fail;errno:" << errno << endl;
@@ -84,13 +86,7 @@ void view_login::process(Json::Value val, int cli_fd)
 	}
 
 	//访问offline
-	if(mysql_select_db(mpcon, "offline"))
-	{
-		cerr << "select fail：errno：" << errno << endl;
-		return;
-	}
-
-	cmd = "SELECT * FORM offline WHERE NAME='';";
+	cmd = "SELECT * FROM offline WHERE NAME='';";
 	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
@@ -100,9 +96,17 @@ void view_login::process(Json::Value val, int cli_fd)
 
 	mp_res = mysql_store_result(mpcon);
 	mp_row = mysql_fetch_row(mp_res);
-	_message = mp_row[2];
+    if(mp_row == 0)
+    {
+	    _message = "\0";
+    }
+    else
+    {
+        _message = mp_row[1];
+    }
 
-	cmd = "DELETE FORM offline WHERE NAME='';";
+
+	cmd = "DELETE FROM offline WHERE NAME='';";
 	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
 	mp_res = mysql_store_result(mpcon);
 	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
@@ -110,6 +114,7 @@ void view_login::process(Json::Value val, int cli_fd)
 		cerr << "0 query fail;errno:" << errno << endl;
 		return;
 	}
+    _flag = true;
 }
 
 void view_login::responce()

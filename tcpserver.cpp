@@ -29,7 +29,8 @@ Tcpserver::Tcpserver(char *ip,int port,int pth_num):_pth_num(pth_num)
     int res = bind(sockfd,(struct sockaddr *)&saddr,sizeof(saddr));
     if(res == -1)
     {
-        cerr<<"bing is error! errno:"<<errno<<endl;
+        cerr<<"bind is error! errno:"<<errno<<endl;
+        exit(1);
     }
 
     listen(sockfd,5);
