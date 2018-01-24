@@ -22,11 +22,13 @@ Tcpclient::Tcpclient(char *ip, int port)
 
         _sockfd = sockfd;
         struct sockaddr_in saddr;
-        memset(&(saddr), 0, sizeof(saddr));
+        memset(&saddr, 0, sizeof(saddr));
         
         saddr.sin_family = AF_INET;
         saddr.sin_port = htons(port);
         saddr.sin_addr.s_addr = inet_addr(ip);
+
+        cout << "client ip=" << inet_ntoa(saddr.sin_addr) << "      " << "port=" << ntohs(saddr.sin_port) << endl;
         int res = connect(sockfd, (struct sockaddr *)&saddr, sizeof(saddr));
         if(res == -1)
         {
@@ -37,23 +39,16 @@ Tcpclient::Tcpclient(char *ip, int port)
 
 Tcpclient::~Tcpclient(){}
 
-static void Show(const char *buff)
-{
-    for(int i = 0; i < strlen(buff); ++i)
-    {
-        cout<<buff[i];
-    }
-}
-
 void Tcpclient::run()
 {
     char cmd[1024];
     while(1)
     {
-        memset(cmd, 0, strlen(cmd));	
+        cout<<"Input cmd"<<endl;
+        memset(cmd, 0, strlen(cmd));
         cin >> cmd;
 
-        if(strcmp(cmd, "login"))
+        if(strcmp(cmd, "login") == 0)
         {
             Json::Value val;
             val["type"] = MSG_TYPE_LOGIN;
@@ -67,14 +62,14 @@ void Tcpclient::run()
             val["pw"] = buff; 
             
             send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
-            char recvBuff[2048];
+            char recvBuff[1024];
             while(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
             {
-                Show(recvBuff);
+                cout << recvBuff << endl;
             }
 
         }
-        else if(strcmp(cmd, "rigister"))
+        else if(strcmp(cmd, "rigister") == 0)
         {
             Json::Value val;
             val["type"] = MSG_TYPE_REGISTER;
@@ -88,10 +83,10 @@ void Tcpclient::run()
             val["pw"] = buff; 
 
             send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
-            char recvBuff[2048];
+            char recvBuff[1024];
             while(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
             {
-                Show(recvBuff);
+                cout << recvBuff << endl;
             }
         }
     }

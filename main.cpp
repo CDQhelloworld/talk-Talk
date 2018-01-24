@@ -13,6 +13,14 @@ int main(int argc, char **argv)
 	char *ip = argv[1];
 	int port = atoi(argv[2]);
 
+    int i = 0;
+    for(; ip[i] != 0; ++i)
+    {
+        cout << ip[i];
+    }
+    cout << endl;
+    cout << port << endl;
+
 	tcpclient cli(ip, port);
 
 	cli.run();
