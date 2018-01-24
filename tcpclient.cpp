@@ -63,7 +63,7 @@ void Tcpclient::run()
             
             send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
             char recvBuff[1024];
-            while(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
+            if((recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)) > 0)
             {
                 cout << recvBuff << endl;
             }
@@ -84,7 +84,7 @@ void Tcpclient::run()
 
             send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
             char recvBuff[1024];
-            while(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
+            if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
             {
                 cout << recvBuff << endl;
             }
