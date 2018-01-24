@@ -24,14 +24,12 @@ Mpthread::mpthread(int sock_1)
 	//->pth_run(this)
 }
 
-//遗留项
 void cli_cb(int fd,short event,void* arg)
 {
 	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
-	int len = recv(fd, buff, sizeof(buff), 0);
-	while(len > 0)
+	while((recv(fd, buff, sizeof(buff)/sizeof(buff[0], 0))) > 0)
 	{
 		//buff->contral 
 		string mess(buff);
