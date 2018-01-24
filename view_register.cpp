@@ -2,6 +2,9 @@
 #include "view_register.h"
 #include <string>
 #include "view.h"
+#include <mysql/mysql.h>
+#include <string.h>
+#include <sys/socket.h>
 #include <errno.h>
 using namespace std;
 
@@ -27,7 +30,7 @@ void view_register::process(Json::Value val, int cli_fd)
 
 	string cmd = "SELECT * FROM user WHEN NAME='';";
 	cmd.insert(cmd.size() - 2, val["name"].asString());
-	if(mysql_real_quary(mpcon, cmd.c_str(), strlen(cmd.c_str())))
+	if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 	{
 		cerr << "0 query fail;error:" << errno << endl;
 		return;
@@ -41,7 +44,7 @@ void view_register::process(Json::Value val, int cli_fd)
 		cmd = "INSERT INTO user VALUE("","");";
 		cmd.insert(cmd.size() - 6, val["name"].asString().c_str());
 		cmd.insert(cmd.size() - 3, val["pw"].asString().c_str());
-		if(mysql_real_quary(mpcon, cmd.c_str(), strlen(cmd.c_str())))
+		if(mysql_real_query(mpcon, cmd.c_str(), strlen(cmd.c_str())))
 		{
 			cerr << "0 query fail; error:" << errno << endl;
 			return;
@@ -59,11 +62,11 @@ void view_register::responce()
 	if(_flag)
 	{
 		char buff[] = "注册成功";
-		send(_cli_fd, buff, strlen(buff));
+		send(_cli_fd, buff, strlen(buff), 0);
 	}
 	else
 	{
 		char buff[] = "注册失败";
-		send(_cli_fd, buff, strlen(buff));
+		send(_cli_fd, buff, strlen(buff), 0);
 	}
 }

@@ -14,7 +14,7 @@
 #include<memory.h>
 using namespace std;
 
-Tcpserver::Tcpserver(char *ip,unsigned short port,int pth_num):_pth_num(pth_num)
+Tcpserver::Tcpserver(char *ip,int port,int pth_num):_pth_num(pth_num)
 {
 	//创建服务器
 	int sockfd = socket(AF_INET,SOCK_STREAM,0);
@@ -27,10 +27,14 @@ Tcpserver::Tcpserver(char *ip,unsigned short port,int pth_num):_pth_num(pth_num)
     saddr.sin_addr.s_addr = inet_addr(ip);
 
     int res = bind(sockfd,(struct sockaddr *)&saddr,sizeof(saddr));
-    assert(-1 != res);
+    if(res == -1)
+    {
+        cerr<<"bing is error! errno:"<<errno<<endl;
+    }
 
     listen(sockfd,5);
 
+    cout << "server port=" << ntohs(saddr.sin_port) << "        " << "server ip=" << inet_ntoa(saddr.sin_addr) << endl;
 
 	_listen_fd = sockfd;
 
@@ -43,7 +47,9 @@ void sock_fd_cb(int fd, short event, void *arg)
 	//拿到客户端套接字
 	struct sockaddr_in caddr;
 	int len = sizeof(caddr);
-	int cli_fd = accept(fd, (struct sockaddr *)&caddr, (socklen_t*)&len);
+	int cli_fd = accept(fd, (struct sockaddr *)&caddr, (socklen_t *)&len);
+
+    cout << "client port=" << ntohs(caddr.sin_port) << "       " << "ip=" << inet_ntoa(caddr.sin_addr) << endl;
 
 	//调查map表拿最小访问量的子线程套接字
 	pTcpsever mthis = (pTcpsever)arg;
@@ -77,7 +83,8 @@ void Tcpserver::run()
 	create_pth(_pth_num);
 
 	//将监听套接子libevent
-	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, NULL);
+	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, this);
+    event_add(ev_socketfd,NULL);
 
 	//循环监听
 	event_base_dispatch(_base);
@@ -89,7 +96,7 @@ void Tcpserver::create_pth(int pth_num)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
-		new Mpthread th(_socket_pair_base[0].sockfd[1]);
+	    new mpthread(((_socket_pair_base[i]).sockfd)[1]);
 	}
 }
 

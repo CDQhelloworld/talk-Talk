@@ -9,7 +9,7 @@ using namespace std;
 
 void *pth_run(void *arg);
 
-Mpthread::mpthread(int sock_1)
+mpthread::mpthread(int sock_1)
 {
 	_sock_1 = sock_1;
 	
@@ -29,7 +29,7 @@ void cli_cb(int fd,short event,void* arg)
 	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
-	while((recv(fd, buff, sizeof(buff)/sizeof(buff[0], 0))) > 0)
+	while((recv(fd, buff, sizeof(buff)/sizeof(buff[0]), 0)) > 0)
 	{
 		//buff->contral 
 		string mess(buff);

@@ -7,3 +7,11 @@ view_talk_one::view_talk_one(void *mpcon)
 {
     _mpcon = (MYSQL *)mpcon;
 }
+
+void view_talk_one::process(Json::Value value, int cli_fd)
+{
+}
+
+void view_talk_one::responce()
+{
+}

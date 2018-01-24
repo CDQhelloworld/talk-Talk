@@ -9,7 +9,7 @@ using namespace std;
 typedef class Tcpserver
 {
 	public:
-		Tcpserver(char *ip,unsigned short port,int pth_num);
+		Tcpserver(char *ip, int  port,int pth_num);
 		~Tcpserver(){}
 		void run();
 		void create_socket_pair();
