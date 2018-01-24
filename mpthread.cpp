@@ -4,6 +4,7 @@
 #include<errno.h>
 #include<event.h>
 #include<sys/socket.h>
+#include<map>
 #include"control.h"
 using namespace std;
 
@@ -29,11 +30,19 @@ void cli_cb(int fd,short event,void* arg)
 	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
-	while((recv(fd, buff, sizeof(buff)/sizeof(buff[0]), 0)) > 0)
+	if((recv(fd, buff, sizeof(buff)/sizeof(buff[0]), 0)) > 0)
 	{
 		//buff->contral 
 		mthis->_control.handle(buff, fd);
 	}
+    else
+    {
+        event_del(mthis->_event_map[fd]);
+        typedef map<int,struct event *>::iterator iterator;
+        iterator it = mthis->_event_map.find(fd);
+        mthis->_event_map.erase(it);
+        cout<<"client fd="<<fd<<"已断开！"<<endl;
+    }
 	     
 }
 

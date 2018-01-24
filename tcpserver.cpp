@@ -50,7 +50,7 @@ void sock_fd_cb(int fd, short event, void *arg)
 	int len = sizeof(caddr);
 	int cli_fd = accept(fd, (struct sockaddr *)&caddr, (socklen_t *)&len);
 
-    cout << "client port=" << ntohs(caddr.sin_port) << "       " << "ip=" << inet_ntoa(caddr.sin_addr) << endl;
+    cout << "client fd="<< fd <<"        port=" << ntohs(caddr.sin_port) << "       ip=" << inet_ntoa(caddr.sin_addr) << endl;
 
 	//调查map表拿最小访问量的子线程套接字
 	pTcpsever mthis = (pTcpsever)arg;

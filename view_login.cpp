@@ -122,24 +122,15 @@ void view_login::responce()
 	if(_flag)
 	{
 		//登陆成功
-        //遗留 buff放满了 】怎么办
 		char buff[16] = "登陆成功！";
-		/*if(_message.size() != 0)
-		{
-			strcat(buff, "[");
-			strcat(buff, _message.c_str());
-			strcat(buff, "]");
-		}*/
 		send(_cli_fd, buff, strlen(buff), 0);
-		send(_cli_fd, _message.c_str(), strlen(_message.c_str()), 0);
+		send(_cli_fd, _message.c_str(), _message.size(), 0);
 	}
 	else
 	{
 		//登陆失败
 		char buff[] = "登陆失败，输入密码错误或账号在异地登陆";
 		send(_cli_fd, buff, strlen(buff), 0);
-		send(_cli_fd, (char *)0, sizeof(int), 0);
 	}
-	//send(string     _cli_fd);
 }
  

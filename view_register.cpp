@@ -21,7 +21,7 @@ void view_register::process(Json::Value val, int cli_fd)
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
 
-	//访问一下user表，如果
+	//访问user表
 	if(mysql_select_db(mpcon, "talk"))
 	{
 		cerr << "select fail：errno：" << errno << endl;
