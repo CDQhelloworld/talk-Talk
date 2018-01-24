@@ -19,4 +19,4 @@ view_talk_one.o : view_talk_one.cpp
 	g++ -c view_talk_one.cpp
 
 clean :
-	rm server_main main.o tcpserver.o mpthread.o control.o view_login.o
+	rm server_main *.o
