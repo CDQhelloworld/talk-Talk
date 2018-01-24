@@ -12,6 +12,9 @@
 #include<json/json.h>
 using namespace std;
 
+extern int _fd;
+extern string _name;
+
 Tcpclient::Tcpclient(char *ip, int port)
 {
         int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -21,11 +24,13 @@ Tcpclient::Tcpclient(char *ip, int port)
         }
 
         _sockfd = sockfd;
+        _fd = sockfd;
         struct sockaddr_in saddr;
         memset(&saddr, 0, sizeof(saddr));
         
         saddr.sin_family = AF_INET;
         saddr.sin_port = htons(port);
+        
         saddr.sin_addr.s_addr = inet_addr(ip);
 
         cout << "client ip=" << inet_ntoa(saddr.sin_addr) << "      " << "port=" << ntohs(saddr.sin_port) << endl;
@@ -39,55 +44,100 @@ Tcpclient::Tcpclient(char *ip, int port)
 
 Tcpclient::~Tcpclient(){}
 
+static void Menu()
+{
+    cout<<"-----------------------------------"<<endl;
+    cout<<"|            1.register           |"<<endl;
+    cout<<"|            2.login              |"<<endl;
+    cout<<"|            3.talk_one           |"<<endl;
+    cout<<"|            4.exit               |"<<endl;
+    cout<<"-----------------------------------"<<endl;
+}
+
 void Tcpclient::run()
 {
-    char cmd[1024];
+    int cmd;
     while(1)
     {
+        Menu();
         cout<<"Input cmd"<<endl;
-        memset(cmd, 0, strlen(cmd));
         cin >> cmd;
 
-        if(strcmp(cmd, "login") == 0)
+        switch(cmd)
         {
-            Json::Value val;
-            val["type"] = MSG_TYPE_LOGIN;
-            cout<<"Input your name:";
-            char buff[1024] = {0};
-            cin>>buff;
-            val["name"] = buff;
-            cout<<"Input your password:";
-            memset(buff, 0, strlen(buff));
-            cin>>buff;
-            val["pw"] = buff; 
+            case 2:
+                {
+                    Json::Value val;
+                    val["type"] = MSG_TYPE_LOGIN;
+                    cout<<"Input your name:";
+                    char buff[1024] = {0};
+                    cin>>buff;
+                    val["name"] = buff;
+                    _name = buff;
+                    cout<<"Input your password:";
+                    memset(buff, 0, strlen(buff));
+                    cin>>buff;
+                    val["pw"] = buff; 
             
-            send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
-            char recvBuff[1024];
-            if((recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)) > 0)
-            {
-                cout << recvBuff << endl;
-            }
+                    send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
+                    char recvBuff[1024] = {0};
+                    if((recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)) > 0)
+                    {
+                        cout << recvBuff << endl;
+                    }
+                    break;
+                }
+            case 1:
+                {
+                    Json::Value val;
+                    val["type"] = MSG_TYPE_REGISTER;
+                    cout<<"Input your name:";
+                    char buff[1024] = {0};
+                    cin>>buff;
+                    val["name"] = buff;
+                    cout<<"Input your password:";
+                    memset(buff, 0, strlen(buff));
+                    cin>>buff;
+                    val["pw"] = buff; 
 
+                    send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
+                    char recvBuff[1024] = {0};
+                    if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
+                    {
+                        cout << recvBuff << endl;
+                    }
+                    break;
+                }
+            case 4:
+                {
+                    Json::Value val;
+                    val["type"] = MSG_TYPE_EXIT;
+                    cout<<"Input your name:";
+                    char buff[1024] = {0};
+                    cin>>buff;
+                    val["name"] = buff;
+            
+                    send(_sockfd, val.toStyledString().c_str(),val.toStyledString().size(), 0);
+                    char recvBuff[1024] = {0};
+                    if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
+                    {
+                        cout << recvBuff << endl;
+                    }
+                    if(strcmp(recvBuff, "退出成功") == 0)
+                    {
+                        exit(1);
+                    }
+                    break;
+                }
+            case 3:
+                {
+                    Json::Value val;
+                    val["type"] = MSG_TYPE_TALK_ONE;
+                    break;
+                }
+            default:break;
         }
-        else if(strcmp(cmd, "rigister") == 0)
-        {
-            Json::Value val;
-            val["type"] = MSG_TYPE_REGISTER;
-            cout<<"Input your name:";
-            char buff[1024] = {0};
-            cin>>buff;
-            val["name"] = buff;
-            cout<<"Input your password:";
-            memset(buff, 0, strlen(buff));
-            cin>>buff;
-            val["pw"] = buff; 
-
-            send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
-            char recvBuff[1024];
-            if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
-            {
-                cout << recvBuff << endl;
-            }
-        }
+        cin.clear();
+        cin.ignore(1024,'\n');
     }
 }
