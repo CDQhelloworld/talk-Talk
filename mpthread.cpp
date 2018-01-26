@@ -41,6 +41,7 @@ void cli_cb(int fd,short event,void* arg)
         typedef map<int,struct event *>::iterator iterator;
         iterator it = mthis->_event_map.find(fd);
         mthis->_event_map.erase(it);
+        close(fd);
         cout<<"client fd="<<fd<<"已断开！"<<endl;
     }
 	     
