@@ -8,6 +8,8 @@
 #include <stdlib.h>
 using namespace std;
 
+extern pthread_mutex_t mutex;
+
 view_talk_one::view_talk_one(void *mpcon)
 {
     _mpcon = (MYSQL *)mpcon;
@@ -27,6 +29,7 @@ void view_talk_one::process(Json::Value val, int cli_fd)
         return;
     }
 
+    pthread_mutex_lock(&mutex);
     //查询online表，如果有则发送，如果没有则加入到离线表中
     string cmd = "SELECT * FROM online WHERE name='';";
     cmd.insert(cmd.size()-2, val["sendto"].asString().c_str());
@@ -58,6 +61,7 @@ void view_talk_one::process(Json::Value val, int cli_fd)
         else
             _flag = true;
     }
+    pthread_mutex_unlock(&mutex);
 }
 
 void view_talk_one::responce()

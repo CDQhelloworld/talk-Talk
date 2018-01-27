@@ -7,6 +7,8 @@
 #include <mysql/mysql.h>
 using namespace std;
 
+extern pthread_mutex_t mutex;
+
 typedef class control
 {
 public:

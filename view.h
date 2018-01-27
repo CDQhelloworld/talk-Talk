@@ -4,6 +4,7 @@
 
 #include <mysql/mysql.h>
 #include <json/json.h>
+#include <pthread.h>
 
 class view
 {

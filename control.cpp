@@ -10,6 +10,8 @@
 #include <mysql/mysql.h>
 using namespace std;
 
+pthread_mutex_t mutex;
+
 Control::control()
 {
 	MYSQL *mpcon = mysql_init((MYSQL *)0);

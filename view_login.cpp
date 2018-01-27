@@ -12,6 +12,8 @@
 #include<stdlib.h>
 using namespace std;
 
+extern pthread_mutex_t mutex;
+
 view_login::view_login(void *mpcon)
 {
 	_mpcon = (MYSQL *)mpcon;
@@ -31,6 +33,7 @@ void view_login::process(Json::Value val, int cli_fd)
 		return;
 	}	
     
+    pthread_mutex_lock(&mutex);
 	//访问usr表
 	string cmd ("SELECT * FROM user WHERE NAME='';");
 	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
@@ -117,6 +120,8 @@ void view_login::process(Json::Value val, int cli_fd)
 		cerr << "0 query fail;errno:" << errno << endl;
 		return;
 	}
+    pthread_mutex_unlock(&mutex);
+
     _flag = true;
 }
 
@@ -125,12 +130,9 @@ void view_login::responce()
 	if(_flag)
 	{
 		//登陆成功
-		char buff[16] = "登陆成功\n";
-        pthread_mutex_t mutex;
-        pthread_mutex_lock(&mutex);
-		send(_cli_fd, buff, strlen(buff), 0);
+		char buff[] = "登陆成功\n";
+        _message.insert(0, buff);
 		send(_cli_fd, _message.c_str(), _message.size(), 0);
-        pthread_mutex_unlock(&mutex);
 	}
 	else
 	{
