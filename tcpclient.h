@@ -4,6 +4,7 @@
 #define TCPCLIENT
 
 #include <string>
+#include "mpthread.h"
 using namespace std;
 
 typedef class Tcpclient
@@ -15,6 +16,7 @@ public:
 private:
 	string _cmd;
 	int _sockfd;
+    pMpthread _pth;
 }tcpclient,*pTcpclient;
 
 

@@ -41,10 +41,14 @@ Tcpclient::Tcpclient(char *ip, int port)
             cerr << "connect fail! errno:" << errno << endl;
             exit(1);
         }
-        new mpthread(sockfd);
+        
+        pMpthread _pth = new mpthread(sockfd);
 }
 
-Tcpclient::~Tcpclient(){}
+Tcpclient::~Tcpclient()
+{
+    delete _pth;
+}
 
 static void Menu()
 {
@@ -69,6 +73,11 @@ void Tcpclient::run()
         {
             case 2:
                 {
+                    if(_name.size() != 0)
+                    {
+                        cout << "当前已经有登录用户，请先退出" << endl;
+                        break;
+                    }
                     Json::Value val;
                     val["type"] = MSG_TYPE_LOGIN;
                     cout<<"Input your name:";
@@ -83,13 +92,6 @@ void Tcpclient::run()
                     val["pw"] = buff; 
             
                     send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
-                    /*
-                    char recvBuff[1024] = {0};
-                    if((recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)) > 0)
-                    {
-                        cout << recvBuff << endl;
-                    }
-                    */
                     break;
                 }
             case 1:
@@ -106,40 +108,20 @@ void Tcpclient::run()
                     val["pw"] = buff; 
 
                     send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
-                    /*
-                    char recvBuff[1024] = {0};
-                    if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
-                    {
-                        cout << recvBuff << endl;
-                    }
-                    */
                     break;
                 }
             case 4:
                 {
+                    if(_name.size() == 0)
+                    {
+                        cout << "当前没有登录用户，无法退出" << endl;
+                        break;
+                    }
                     Json::Value val;
                     val["type"] = MSG_TYPE_EXIT;
-                    /*
-                    cout<<"Input your name:";
-                    char buff[1024] = {0};
-                    cin>>buff;
-                    val["name"] = buff;
-                    */
                     val["name"] = _name;
             
                     send(_sockfd, val.toStyledString().c_str(),val.toStyledString().size(), 0);
-                    /*
-                    char recvBuff[1024] = {0};
-                    if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
-                    {
-                        cout << recvBuff << endl;
-                    }
-                    if(strcmp(recvBuff, "退出成功") == 0)
-                    {
-                        close(_sockfd);
-                        exit(1);
-                    }
-                    */
                     break;
                 }
             case 3:
@@ -161,13 +143,6 @@ void Tcpclient::run()
                     val["sendto"] = buff;
 
                     send(_sockfd, val.toStyledString().c_str(), val.toStyledString().size(), 0);
-                    /*
-                    char recvBuff[1024] = {0};
-                    if(0 < (recv(_sockfd, recvBuff, sizeof(recvBuff)/sizeof(recvBuff[0]), 0)))
-                    {
-                        cout << recvBuff << endl;
-                    }
-                    */
                     break;
                 }
             default:break;
