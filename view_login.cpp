@@ -105,9 +105,7 @@ void view_login::process(Json::Value val, int cli_fd)
         }
         else
         {
-            cout << mp_row[1] << endl;
             _message += mp_row[1];
-            cout << _message << endl;
         }
     }while(mp_row == 0);
 
@@ -127,10 +125,9 @@ void view_login::responce()
 	if(_flag)
 	{
 		//登陆成功
-		char buff[16] = "登陆成功！";
+		char buff[16] = "登陆成功\n";
         pthread_mutex_t mutex;
         pthread_mutex_lock(&mutex);
-    cout << _message << endl;
 		send(_cli_fd, buff, strlen(buff), 0);
 		send(_cli_fd, _message.c_str(), _message.size(), 0);
         pthread_mutex_unlock(&mutex);
