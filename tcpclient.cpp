@@ -78,13 +78,13 @@ void Tcpclient::run()
                         cout << "当前已经有登录用户，请先退出" << endl;
                         break;
                     }
+
                     Json::Value val;
                     val["type"] = MSG_TYPE_LOGIN;
                     cout<<"Input your name:";
                     char buff[1024] = {0};
                     cin>>buff;
                     val["name"] = buff;
-                    //name已经有登录用户
                     _name = buff;
                     cout<<"Input your password:";
                     memset(buff, 0, strlen(buff));
@@ -126,6 +126,12 @@ void Tcpclient::run()
                 }
             case 3:
                 {
+                    if(_name.size() == 0)
+                    {
+                        cout << "当前没有登录用户，无法发送消息" << endl;
+                        break;
+                    }
+
                     Json::Value val;
                     val["type"] = MSG_TYPE_TALK_ONE;
                     val["sendfrom"] = _name;
@@ -136,7 +142,7 @@ void Tcpclient::run()
                     cin>>buff;
                     message.insert(message.size()-1, buff);
                     val["message"] = message.c_str();
-                    cout << message <<endl;
+                cout << message <<endl;
                     memset(buff,0,strlen(buff));
                     cout<<"You want to send for:";
                     cin>>buff;
