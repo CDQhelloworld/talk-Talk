@@ -9,10 +9,14 @@
 #include<unistd.h>
 #include<functional>
 #include<algorithm>
+#include<signal.h>
 using namespace std;
 
 int main(int argc,char **argv)
 {
+    signal(SIGPIPE,SIG_IGN);
+    signal(SIGINT,SIG_IGN);
+
 	if(argc < 4)
 	{
         cout<<"ip,port,pth_num!!!"<<endl;
