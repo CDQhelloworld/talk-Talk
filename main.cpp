@@ -32,6 +32,7 @@ int main(int argc, char **argv)
 	if(argc < 3)
 	{
 		cerr << "arg is not enough! (ip,port)" << endl;
+        exit(1);
 	}
 
 	char *ip = argv[1];
