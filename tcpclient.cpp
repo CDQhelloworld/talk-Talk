@@ -9,6 +9,7 @@
 #include<arpa/inet.h>
 #include<string.h>
 #include<memory>
+#include<sstream>
 #include<json/json.h>
 #include"mpthread.h"
 using namespace std;
@@ -131,6 +132,8 @@ void Tcpclient::run()
                         cout << "当前没有登录用户，无法发送消息" << endl;
                         break;
                     }
+                    cin.clear();
+                    cin.ignore(1024,'\n');
 
                     Json::Value val;
                     val["type"] = MSG_TYPE_TALK_ONE;
@@ -139,14 +142,14 @@ void Tcpclient::run()
                     string message = "[:]";
                     message.insert(1, _name.c_str());
                     cout<<"Input your message:";
-                    cin>>buff;
+                    cin.getline(buff,1024);
                     message.insert(message.size()-1, buff);
                     val["message"] = message.c_str();
-                cout << message <<endl;
                     memset(buff,0,strlen(buff));
                     cout<<"You want to send for:";
                     cin>>buff;
                     val["sendto"] = buff;
+                cout << message <<endl;
 
                     send(_sockfd, val.toStyledString().c_str(), val.toStyledString().size(), 0);
                     break;

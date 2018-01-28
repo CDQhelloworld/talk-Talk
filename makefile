@@ -9,4 +9,4 @@ mpthread.o : mpthread.cpp
 	g++ -c mpthread.cpp -lpthread -g
 
 clean :
-	rm -f *.o cli_main
+	rm -f *.o client_main
