@@ -7,7 +7,6 @@
 #include <sys/socket.h>
 using namespace std;
 
-extern pthread_mutex_t mutex;
 
 view_exit::view_exit(void *mpcon)
 {
@@ -29,7 +28,6 @@ void view_exit::process(Json::Value value, int cli_fd)
         return;
     }
 
-    pthread_mutex_lock(&mutex);
     //访问在线表
     string cmd = "DELETE FROM online WHERE name='';";
     cmd.insert(cmd.size()-2, value["name"].asString().c_str());
@@ -38,7 +36,6 @@ void view_exit::process(Json::Value value, int cli_fd)
         cerr << "0 query fail; errno:" << errno << endl;
         return;
     }
-    pthread_mutex_unlock(&mutex);
     _flag = true;
 }
 

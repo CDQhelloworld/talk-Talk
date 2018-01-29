@@ -49,26 +49,34 @@ int main(int argc, char **argv)
     int port = atoi(argv[2]);
 
     int recvSock = 0;
-    while(1)
+    int j = 0;
+    while(j < 10003)
     {
         recvSock = SocketCreate(ip,port);
         if(recvSock == -1)
         {
             break;
         }
+        j++;
     }
+    cout<<"0k"<<endl;
+    sleep(3);
 
         Json::Value val;
         val["type"] = 2;//LOGIN
         val["name"] = "hu";
         val["pw"] = "hahaha";
     
-    int i = 3;
+    int i = 4;
     for(;i<100000;++i)
     {
+        cout<<i<<endl;
+        send(i,val.toStyledString().c_str(),val.toStyledString().size(),0);
         send(i,val.toStyledString().c_str(),val.toStyledString().size(),0);
     }
 
     cout << "最大连接量：" << _sock_count << endl;
+    int kkk;
+    cin >> kkk;
     return 0;
 }

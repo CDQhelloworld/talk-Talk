@@ -5,6 +5,7 @@
 #include<event.h>
 #include<sys/socket.h>
 #include<map>
+#include<time.h>
 #include"control.h"
 using namespace std;
 
@@ -27,6 +28,12 @@ mpthread::mpthread(int sock_1)
 
 void cli_cb(int fd,short event,void* arg)
 {
+    static unsigned count = 0;
+    count++;
+    static clock_t start = time(0);
+    clock_t end = time(0);
+    cout << "count="<<count <<"     "<<"time=" << end-start <<endl;
+
 	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
