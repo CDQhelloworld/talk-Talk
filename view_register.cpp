@@ -8,8 +8,6 @@
 #include <errno.h>
 using namespace std;
 
-extern pthread_mutex_t mutex;
-
 view_register::view_register(void *mpcon)
 {
 	_mpcon = (MYSQL *)mpcon;
@@ -23,7 +21,6 @@ void view_register::process(Json::Value val, int cli_fd)
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
 
-    pthread_mutex_lock(&mutex);
 	//访问user表
 	if(mysql_select_db(mpcon, "talk"))
 	{
@@ -58,7 +55,6 @@ void view_register::process(Json::Value val, int cli_fd)
 		_flag = false;
 		return;
 	}
-    pthread_mutex_unlock(&mutex);
 }
 
 void view_register::responce()
