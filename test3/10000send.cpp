@@ -56,12 +56,17 @@ int main(int argc, char **argv)
         {
             break;
         }
+    }
 
         Json::Value val;
         val["type"] = 2;//LOGIN
         val["name"] = "hu";
         val["pw"] = "hahaha";
-        send(_sockfd,val.toStyledString().c_str(),val.toStyledString().size(),0);
+    
+    int i = 3;
+    for(;i<100000;++i)
+    {
+        send(i,val.toStyledString().c_str(),val.toStyledString().size(),0);
     }
 
     cout << "最大连接量：" << _sock_count << endl;
