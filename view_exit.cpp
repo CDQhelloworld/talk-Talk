@@ -4,12 +4,14 @@
 #include <errno.h>
 #include <string>
 #include <string.h>
+#include "redis.h"
 #include <sys/socket.h>
 using namespace std;
 
-view_exit::view_exit(void *mpcon)
+view_exit::view_exit(void *mpcon, void *redis)
 {
     _mpcon = (MYSQL *)mpcon;
+    _redis = (pRedis)redis;
 }
 
 void view_exit::process(Json::Value value, int cli_fd)

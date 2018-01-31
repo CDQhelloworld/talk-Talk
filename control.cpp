@@ -12,20 +12,26 @@ using namespace std;
 
 pthread_mutex_t mutex;
 
-Control::control()
+Control::control(char *ip, int port)
 {
 	MYSQL *mpcon = mysql_init((MYSQL *)0);
-	if(!mysql_real_connect(mpcon, "127.0.0.1", "root", "970808", NULL, 3306, NULL, 0))
+	if(!mysql_real_connect(mpcon, ip, "root", "970808", NULL, 3306, NULL, 0))
 	{
 		cerr << "sql connect fail;errno:" << errno << endl;
 		return;
 	}
 
-	_map.insert(make_pair(MSG_TYPE_REGISTER, new view_register(mpcon)));
-	_map.insert(make_pair(MSG_TYPE_LOGIN, new view_login(mpcon)));
-	_map.insert(make_pair(MSG_TYPE_EXIT, new view_exit(mpcon)));
-	_map.insert(make_pair(MSG_TYPE_TALK_ONE, new view_talk_one(mpcon)));
+    pRedis re = new redis();
+    if(!re->connect(ip, port))
+    {
+        cout<<"redis connect fail"<<endl;
+        return;
+    }
 
+	_map.insert(make_pair(MSG_TYPE_REGISTER, new view_register(mpcon, re)));
+	_map.insert(make_pair(MSG_TYPE_LOGIN, new view_login(mpcon, re)));
+	_map.insert(make_pair(MSG_TYPE_EXIT, new view_exit(mpcon, re)));
+	_map.insert(make_pair(MSG_TYPE_TALK_ONE, new view_talk_one(mpcon, re)));
 }
 
 /*
@@ -35,6 +41,7 @@ Control::~control()
 	{
 		delete (*_map[i].second);
 	}
+    delete _redis;
 }
 */
 

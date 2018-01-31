@@ -14,7 +14,7 @@
 #include<memory.h>
 using namespace std;
 
-Tcpserver::Tcpserver(char *ip,int port,int pth_num):_pth_num(pth_num)
+Tcpserver::Tcpserver(char *ip,int port,int pth_num):_pth_num(pth_num),_ip(ip),_port(port)
 {
 	//创建服务器
 	int sockfd = socket(AF_INET,SOCK_STREAM,0);
@@ -81,7 +81,7 @@ void Tcpserver::run()
 	create_socket_pair();
 
 	//启动线程
-	create_pth(_pth_num);
+	create_pth(_pth_num, _ip, _port);
 
 	//将监听套接子libevent
 	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, this);
@@ -93,11 +93,11 @@ void Tcpserver::run()
 
 
 
-void Tcpserver::create_pth(int pth_num)
+void Tcpserver::create_pth(int pth_num, char *ip, int port)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
-	    new mpthread(((_socket_pair_base[i]).sockfd)[1]);
+	    new mpthread(((_socket_pair_base[i]).sockfd)[1], ip, port);
 	}
 }
 

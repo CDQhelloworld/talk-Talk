@@ -4,13 +4,15 @@
 #include "view.h"
 #include <mysql/mysql.h>
 #include <string.h>
+#include "redis.h"
 #include <sys/socket.h>
 #include <errno.h>
 using namespace std;
 
-view_register::view_register(void *mpcon)
+view_register::view_register(void *mpcon, void *redis)
 {
 	_mpcon = (MYSQL *)mpcon;
+    _redis = (pRedis)redis;
 }
 
 void view_register::process(Json::Value val, int cli_fd)

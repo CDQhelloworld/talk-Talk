@@ -6,11 +6,13 @@
 #include <string.h>
 #include <json/json.h>
 #include <stdlib.h>
+#include "redis.h"
 using namespace std;
 
-view_talk_one::view_talk_one(void *mpcon)
+view_talk_one::view_talk_one(void *mpcon, void *redis)
 {
     _mpcon = (MYSQL *)mpcon;
+    _redis = (pRedis)redis;
 }
 
 void view_talk_one::process(Json::Value val, int cli_fd)

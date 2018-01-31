@@ -10,10 +10,13 @@ using namespace std;
 
 void *pth_run(void *arg);
 
-mpthread::mpthread(int sock_1)
+mpthread::mpthread(int sock_1, char *ip, int port)
 {
 	_sock_1 = sock_1;
 	
+    //生成控制台
+    _control = new control(ip, port);
+
 	//启动子线程
     pthread_t id;
     if((pthread_create(&id,NULL,pth_run,this)) != 0)
@@ -21,8 +24,6 @@ mpthread::mpthread(int sock_1)
         cerr<<"pthread_create error:"<<errno<<endl;
         return;
     }
-
-	//->pth_run(this)
 }
 
 void cli_cb(int fd,short event,void* arg)
@@ -33,7 +34,7 @@ void cli_cb(int fd,short event,void* arg)
 	if((recv(fd, buff, sizeof(buff)/sizeof(buff[0]), 0)) > 0)
 	{
 		//buff->contral 
-		mthis->_control.handle(buff, fd);
+		mthis->_control->handle(buff, fd);
 	}
     else
     {

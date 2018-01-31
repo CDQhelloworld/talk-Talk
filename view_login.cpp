@@ -10,11 +10,13 @@
 #include<json/json.h>
 #include<sys/socket.h>
 #include<stdlib.h>
+#include"redis.h"
 using namespace std;
 
-view_login::view_login(void *mpcon)
+view_login::view_login(void *mpcon, void *redis)
 {
 	_mpcon = (MYSQL *)mpcon;
+    _redis = (pRedis)redis;
 }
 
 void view_login::process(Json::Value val, int cli_fd)

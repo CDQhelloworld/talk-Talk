@@ -13,12 +13,14 @@ typedef class Tcpserver
 		~Tcpserver(){}
 		void run();
 		void create_socket_pair();
-		void create_pth(int pth_num);
+		void create_pth(int pth_num, char *ip, int port);
 
 	private:
 		struct event_base* _base;//libevent
 		int _listen_fd;//listenfd
 		int _pth_num;//线程个数
+        char *_ip;
+        int _port;
 		map<unsigned,unsigned> _pth_num_map;//线程监听数量的map表
         typedef struct myPair
         {
