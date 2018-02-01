@@ -139,8 +139,8 @@ void Tcpclient::run()
                     val["type"] = MSG_TYPE_TALK_ONE;
                     val["sendfrom"] = _name;
                     char buff[1024] = {0};
-                    string message = "[:]";
-                    message.insert(1, _name.c_str());
+                    string message = "\n[:]";
+                    message.insert(2, _name.c_str());
                     cout<<"Input your message:";
                     cin.getline(buff,1024);
                     message.insert(message.size()-1, buff);
