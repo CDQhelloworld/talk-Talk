@@ -102,14 +102,14 @@ void view_login::process(Json::Value val, int cli_fd)
         mp_row = mysql_fetch_row(mp_res);
         if(mp_row == 0)
         {
-            _message = "\0";
+            _message += "\0";
             break;
         }
         else
         {
-            _message += mp_row[1];
+            _message.insert(_message.size(),mp_row[1]);
         }
-    }while(mp_row == 0);
+    }while(mp_row != 0);
 
 	cmd = "DELETE FROM offline WHERE NAME='';";
 	cmd.insert(cmd.size() - 2, val["name"].asString().c_str());
@@ -128,8 +128,10 @@ void view_login::responce()
 	if(_flag)
 	{
 		//登陆成功
-		char buff[] = "登陆成功\n";
+    cout<<_message<<endl;
+		string buff = "登陆成功";
         _message.insert(0, buff);
+    cout<<_message<<endl;
 		send(_cli_fd, _message.c_str(), _message.size(), 0);
 	}
 	else
