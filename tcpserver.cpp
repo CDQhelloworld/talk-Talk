@@ -81,7 +81,7 @@ void Tcpserver::run()
 	create_socket_pair();
 
 	//启动线程
-	create_pth(_pth_num, _ip, _port);
+	create_pth(_pth_num, _ip);
 
 	//将监听套接子libevent
 	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, this);
@@ -93,11 +93,11 @@ void Tcpserver::run()
 
 
 
-void Tcpserver::create_pth(int pth_num, char *ip, int port)
+void Tcpserver::create_pth(int pth_num, char *ip)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
-	    new mpthread(((_socket_pair_base[i]).sockfd)[1], ip, port);
+	    new mpthread(((_socket_pair_base[i]).sockfd)[1], ip);
 	}
 }
 

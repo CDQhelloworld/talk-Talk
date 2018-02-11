@@ -9,10 +9,11 @@
 #include "redis.h"
 using namespace std;
 
-view_talk_one::view_talk_one(void *mpcon, void *redis)
+view_talk_one::view_talk_one(void *mpcon, char *ip)
 {
     _mpcon = (MYSQL *)mpcon;
-    _redis = (pRedis)redis;
+    _redis = new Redis;
+    _redis->_ip = ip;
 }
 
 void view_talk_one::process(Json::Value val, int cli_fd)
@@ -27,6 +28,27 @@ void view_talk_one::process(Json::Value val, int cli_fd)
     {
         cerr<<"select fail; errno:"<<errno<<endl;
         return;
+    }
+
+    if(!_redis->connect(_redis->_ip))
+    {
+        cerr<<"redis connect fail;"<<endl;
+        _flag = false;
+        return;
+    }
+    string str_fd = _redis->get(val["sendto"].asString());
+    if(str_fd.compare("Without this key-value!") != 0)
+    {
+        int fd = atoi(str_fd.c_str());
+        if((send(fd, val["message"].asString().c_str(), val["message"].asString().size(), 0)) > 0)
+        {
+            _flag = true;
+            return;
+        }
+        else
+        {
+            _flag = false;
+        }
     }
 
     //查询online表，如果有则发送，如果没有则加入到离线表中
@@ -56,7 +78,10 @@ void view_talk_one::process(Json::Value val, int cli_fd)
     else
     {
         if((send(atoi(mp_row[0]), val["message"].asString().c_str(), val["message"].asString().size(), 0)) < 0)
+        {
             _flag = false;
+            _redis->set(val["sendto"].asString(), mp_row[0]);
+        }
         else
             _flag = true;
     }

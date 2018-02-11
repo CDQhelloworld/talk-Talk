@@ -13,7 +13,7 @@ typedef class Tcpserver
 		~Tcpserver(){}
 		void run();
 		void create_socket_pair();
-		void create_pth(int pth_num, char *ip, int port);
+		void create_pth(int pth_num, char *ip);
 
 	private:
 		struct event_base* _base;//libevent

@@ -9,7 +9,7 @@ using namespace std;
 typedef class mpthread
 {
 	public:
-		mpthread(int sock_1, char *ip, int port);
+		mpthread(int sock_1, char *ip);
 		~mpthread(){}
 
 	private:

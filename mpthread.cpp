@@ -10,12 +10,12 @@ using namespace std;
 
 void *pth_run(void *arg);
 
-mpthread::mpthread(int sock_1, char *ip, int port)
+mpthread::mpthread(int sock_1, char *ip)
 {
 	_sock_1 = sock_1;
 	
     //生成控制台
-    _control = new control(ip, port);
+    _control = new control(ip);
 
 	//启动子线程
     pthread_t id;

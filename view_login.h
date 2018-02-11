@@ -11,7 +11,7 @@ using namespace std;
 class view_login : public view
 {
 public:
-	view_login(void *mpcon, void *redis);
+	view_login(void *mpcon, char *ip);
 	~view_login(){}
 	void process(Json::Value val, int cli_fd);
 	void responce();

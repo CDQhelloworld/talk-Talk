@@ -9,10 +9,11 @@
 #include <errno.h>
 using namespace std;
 
-view_register::view_register(void *mpcon, void *redis)
+view_register::view_register(void *mpcon, char *ip)
 {
 	_mpcon = (MYSQL *)mpcon;
-    _redis = (pRedis)redis;
+    _redis = new Redis;
+    _redis->_ip = ip;
 }
 
 void view_register::process(Json::Value val, int cli_fd)

@@ -8,16 +8,28 @@
 #include <sys/socket.h>
 using namespace std;
 
-view_exit::view_exit(void *mpcon, void *redis)
+view_exit::view_exit(void *mpcon, char *ip)
 {
     _mpcon = (MYSQL *)mpcon;
-    _redis = (pRedis)redis;
+    _redis = new Redis;
+    _redis->_ip = ip;
 }
 
 void view_exit::process(Json::Value value, int cli_fd)
 {
     _cli_fd = cli_fd;
     _flag = false;
+
+    if(!_redis->connect(_redis->_ip))
+    {
+        cerr<<"redis connect fail;"<<endl;
+        _flag = false;
+        return;
+    }
+    if((_redis->get(value["name"].asString()).compare("Without this key-value!")) != 0)
+    {
+        _redis->del(value["name"].asString());
+    }
 
     MYSQL *mpcon = _mpcon;
     MYSQL_RES * mp_res;
@@ -37,6 +49,7 @@ void view_exit::process(Json::Value value, int cli_fd)
         cerr << "0 query fail; errno:" << errno << endl;
         return;
     }
+
     _flag = true;
 }
 

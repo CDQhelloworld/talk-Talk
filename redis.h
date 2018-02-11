@@ -3,12 +3,15 @@
 
 #include<hiredis/hiredis.h>
 #include<iostream>
+#include<arpa/inet.h>
+#include<sys/socket.h>
 #include<string>
 using namespace std;
 
 typedef class Redis
 {
     public:
+        string _ip;
         Redis(){}
         ~Redis()
         {
@@ -16,9 +19,9 @@ typedef class Redis
             this->_reply = NULL;            
         }
 
-        bool connect(char *ip, int port)
+        bool connect(string ip)
         {
-            this->_connect = redisConnect(ip,port);
+            this->_connect = redisConnect(ip.c_str(), 6379);
             if(this->_connect && this->_connect->err)
             {
                 cout << "redis connect fail; errno:" << this->_connect->errstr << endl;
@@ -30,7 +33,7 @@ typedef class Redis
         //获取数据
         string get(string key)
         {
-            this->_reply = (redisReply *)redisCommand(this->_connect,"GET%s",key.c_str());
+            this->_reply = (redisReply *)redisCommand(this->_connect,"GET %s",key.c_str());
             if(REDIS_REPLY_NIL == this->_reply->type)//判断键值是否存在
             {
                 cout << "without key=" << key << endl;

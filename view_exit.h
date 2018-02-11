@@ -11,7 +11,7 @@ using namespace std;
 class view_exit: public view
 {
 public:
-	view_exit(void *mpcon, void *redis);
+	view_exit(void *mpcon, char *ip);
 	~view_exit(){};
 	void process(Json::Value value, int cli_fd);
 	void responce();

@@ -13,16 +13,17 @@
 #include"redis.h"
 using namespace std;
 
-view_login::view_login(void *mpcon, void *redis)
+view_login::view_login(void *mpcon, char *ip)
 {
 	_mpcon = (MYSQL *)mpcon;
-    _redis = (pRedis)redis;
+    _redis = new Redis;
+    _redis->_ip = ip;
 }
 
 void view_login::process(Json::Value val, int cli_fd)
 {
 	_cli_fd = cli_fd;
-	
+
 	MYSQL *mpcon = this->_mpcon;
 	MYSQL_RES *mp_res;
 	MYSQL_ROW mp_row;
@@ -128,10 +129,8 @@ void view_login::responce()
 	if(_flag)
 	{
 		//登陆成功
-    cout<<_message<<endl;
 		string buff = "登陆成功";
         _message.insert(0, buff);
-    cout<<_message<<endl;
 		send(_cli_fd, _message.c_str(), _message.size(), 0);
 	}
 	else

@@ -11,7 +11,7 @@ using namespace std;
 class view_register: public view
 {
 public:
-	view_register(void *mpcon, void *redis);
+	view_register(void *mpcon, char *ip);
 	~view_register(){}
 	virtual void process(Json::Value val, int cli_fd);
 	virtual void responce();

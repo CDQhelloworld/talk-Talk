@@ -12,7 +12,7 @@ extern pthread_mutex_t mutex;
 typedef class control
 {
 public:
-    control(char *ip, int port);
+    control(char *ip);
     //~control();
 
 	void handle(char *buff, int cli_fd);
