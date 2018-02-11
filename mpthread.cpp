@@ -14,6 +14,7 @@ static void Menu()
     cout<<"|            2.login              |"<<endl;
     cout<<"|            3.talk_one           |"<<endl;
     cout<<"|            4.exit               |"<<endl;
+    cout<<"|            5.clear cache        |"<<endl;
     cout<<"-----------------------------------"<<endl;
 }
 
