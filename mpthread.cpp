@@ -21,11 +21,16 @@ static void Menu()
 static void *pth_fun(void *arg)
 {
     int sockfd = (int)arg;
+    unsigned length = 0;
     char buff[1024];
     while(1)
     {
         memset(buff,0,sizeof(buff)/sizeof(buff[0]));
-        if((recv(sockfd,buff,sizeof(buff)/sizeof(buff[0]),0)) > 0)
+        if((recv(sockfd,(char *)&length,sizeof(unsigned),0)) <= 0)
+        {
+            continue;
+        }
+        if((recv(sockfd,buff,length,0)) > 0)
         {
             cout<<buff<<endl;
             if(strcmp(buff, "退出成功") == 0)

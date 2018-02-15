@@ -32,9 +32,7 @@ Tcpclient::Tcpclient(char *ip, int port)
         
         saddr.sin_family = AF_INET;
         saddr.sin_port = htons(port);
-        
         saddr.sin_addr.s_addr = inet_addr(ip);
-
         cout << "client ip=" << inet_ntoa(saddr.sin_addr) << "      " << "port=" << ntohs(saddr.sin_port) << endl;
         int res = connect(sockfd, (struct sockaddr *)&saddr, sizeof(saddr));
         if(res == -1)
@@ -93,6 +91,8 @@ void Tcpclient::run()
                     cin>>buff;
                     val["pw"] = buff; 
             
+                    unsigned length = val.toStyledString().size();
+                    send(_sockfd, (char *)&length, sizeof(unsigned), 0);
                     send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
                     break;
                 }
@@ -109,6 +109,8 @@ void Tcpclient::run()
                     cin>>buff;
                     val["pw"] = buff; 
 
+                    unsigned length = val.toStyledString().size();
+                    send(_sockfd, (char *)&length, sizeof(unsigned), 0);
                     send(_sockfd, val.toStyledString().c_str(), strlen(val.toStyledString().c_str()), 0);
                     break;
                 }
@@ -123,6 +125,8 @@ void Tcpclient::run()
                     val["type"] = MSG_TYPE_EXIT;
                     val["name"] = _name;
             
+                    unsigned length = val.toStyledString().size();
+                    send(_sockfd, (char *)&length, sizeof(unsigned), 0);
                     send(_sockfd, val.toStyledString().c_str(),val.toStyledString().size(), 0);
                     break;
                 }
@@ -152,6 +156,8 @@ void Tcpclient::run()
                     val["sendto"] = buff;
                 cout << message <<endl;
 
+                    unsigned length = val.toStyledString().size();
+                    send(_sockfd, (char *)&length, sizeof(unsigned), 0);
                     send(_sockfd, val.toStyledString().c_str(), val.toStyledString().size(), 0);
                     break;
                 }
