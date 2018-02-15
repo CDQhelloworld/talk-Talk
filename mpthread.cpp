@@ -31,8 +31,10 @@ void cli_cb(int fd,short event,void* arg)
 	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
-	if((recv(fd, buff, sizeof(buff)/sizeof(buff[0]), 0)) > 0)
+    unsigned length = 0;
+	if((recv(fd, &length, sizeof(unsigned), 0)) > 0)
 	{
+        recv(fd, buff, length, 0);
 		//buff->contral 
 		mthis->_control->handle(buff, fd);
 	}

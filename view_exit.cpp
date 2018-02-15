@@ -60,12 +60,16 @@ void view_exit::responce()
     {
         //退出成功
         char buff[] = "退出成功";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
     else
     {
         //退出失败
         char buff[] = "退出失败，请稍候重试";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
 }

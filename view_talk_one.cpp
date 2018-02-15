@@ -77,13 +77,17 @@ void view_talk_one::process(Json::Value val, int cli_fd)
     }
     else
     {
+        _redis->set(val["sendto"].asString(), mp_row[0]);
+        unsigned len = val["message"].asString().size();
+        send(atoi(mp_row[0]), &len, sizeof(unsigned), 0);
         if((send(atoi(mp_row[0]), val["message"].asString().c_str(), val["message"].asString().size(), 0)) < 0)
         {
             _flag = false;
-            _redis->set(val["sendto"].asString(), mp_row[0]);
         }
         else
+        {
             _flag = true;
+        }
     }
 }
 
@@ -92,11 +96,15 @@ void view_talk_one::responce()
     if(_flag)
     {
         char buff[] = "发送成功";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
     else
     {
         char buff[] = "发送失败，请稍后重试";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
 }

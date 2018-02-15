@@ -65,11 +65,15 @@ void view_register::responce()
 	if(_flag)
 	{
 		char buff[] = "注册成功";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 	else
 	{
 		char buff[] = "注册失败";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 }

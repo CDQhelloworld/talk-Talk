@@ -131,12 +131,16 @@ void view_login::responce()
 		//登陆成功
 		string buff = "登陆成功";
         _message.insert(0, buff);
+        unsigned len = _message.size();
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
 		send(_cli_fd, _message.c_str(), _message.size(), 0);
 	}
 	else
 	{
 		//登陆失败
 		char buff[] = "登陆失败，输入密码错误或账号在异地登陆";
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 }
