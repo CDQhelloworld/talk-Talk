@@ -67,11 +67,12 @@ int main(int argc, char **argv)
         val["name"] = "hu";
         val["pw"] = "hahaha";
     
+    unsigned len = val.toStyledString().size();
     int i = 4;
     for(;i<100000;++i)
     {
         cout<<i<<endl;
-        send(i,val.toStyledString().c_str(),val.toStyledString().size(),0);
+        send(i,&len,sizeof(unsigned),0);
         send(i,val.toStyledString().c_str(),val.toStyledString().size(),0);
     }
 
