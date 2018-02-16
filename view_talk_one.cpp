@@ -14,28 +14,18 @@ view_talk_one::view_talk_one(void *mpcon, char *ip)
     _mpcon = (MYSQL *)mpcon;
     _redis = new Redis;
     _redis->_ip = ip;
-}
-
-void view_talk_one::process(Json::Value val, int cli_fd)
-{
-    _cli_fd = cli_fd;
-
-    MYSQL *mpcon = _mpcon;
-    MYSQL_RES *mp_res;
-    MYSQL_ROW mp_row;
-
-    if(mysql_select_db(mpcon, "talk"))
-    {
-        cerr<<"select fail; errno:"<<errno<<endl;
-        return;
-    }
-
     if(!_redis->connect(_redis->_ip))
     {
         cerr<<"redis connect fail;"<<endl;
         _flag = false;
         return;
     }
+}
+
+void view_talk_one::process(Json::Value val, int cli_fd)
+{
+    _cli_fd = cli_fd;
+
     string str_fd = _redis->get(val["sendto"].asString());
     if(str_fd.compare("Without this key-value!") != 0)
     {
@@ -49,6 +39,16 @@ void view_talk_one::process(Json::Value val, int cli_fd)
         {
             _flag = false;
         }
+    }
+
+    MYSQL *mpcon = _mpcon;
+    MYSQL_RES *mp_res;
+    MYSQL_ROW mp_row;
+
+    if(mysql_select_db(mpcon, "talk"))
+    {
+        cerr<<"select fail; errno:"<<errno<<endl;
+        return;
     }
 
     //查询online表，如果有则发送，如果没有则加入到离线表中
