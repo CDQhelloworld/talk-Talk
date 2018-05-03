@@ -8,5 +8,7 @@ tcpclient.o : tcpclient.cpp mpthread.cpp
 mpthread.o : mpthread.cpp
 	g++ -c mpthread.cpp -lpthread -g
 
-clean :
+clean_obj:
+	rm -f *.o
+clean:
 	rm -f *.o client_main

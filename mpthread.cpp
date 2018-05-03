@@ -1,9 +1,11 @@
 #include "mpthread.h"
+#include <unistd.h>
 #include <iostream>
 #include <errno.h>
 #include <pthread.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <fcntl.h>
 #include <stdlib.h>
 using namespace std;
 
@@ -20,7 +22,7 @@ static void Menu()
 
 static void *pth_fun(void *arg)
 {
-    int sockfd = (int)arg;
+    int sockfd = *(int *)arg;
     unsigned length = 0;
     char buff[1024];
     while(1)
@@ -48,7 +50,7 @@ Mpthread::Mpthread(int sockfd)
 {
     pthread_t id;
 
-    if(pthread_create(&id,NULL,pth_fun,(void *)sockfd) != 0)
+    if(pthread_create(&id,NULL,pth_fun, &sockfd) != 0)
     {
         cerr<<"pthread_create fail; errno:"<<errno<<endl;
         return;
