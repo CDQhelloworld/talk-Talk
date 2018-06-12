@@ -18,5 +18,12 @@ view_exit.o : view_exit.cpp
 view_talk_one.o : view_talk_one.cpp 
 	g++ -c view_talk_one.cpp -lmysqlclient -lpthread -lhiredis -g
 
+<<<<<<< HEAD
 clean :
 	rm server_main *.o
+=======
+clean_obj:
+	rm -f *.o
+clean:
+	rm -f *.o client_main
+>>>>>>> origin/client1.0

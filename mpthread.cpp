@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include<iostream>
 #include"mpthread.h"
 #include<pthread.h>
@@ -6,6 +7,17 @@
 #include<sys/socket.h>
 #include<map>
 #include"control.h"
+=======
+#include "mpthread.h"
+#include <unistd.h>
+#include <iostream>
+#include <errno.h>
+#include <pthread.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <stdlib.h>
+>>>>>>> origin/client1.0
 using namespace std;
 
 void *pth_run(void *arg);
@@ -28,9 +40,13 @@ mpthread::mpthread(int sock_1, char *ip)
 
 void cli_cb(int fd,short event,void* arg)
 {
+<<<<<<< HEAD
 	Pmpthread mthis = (Pmpthread)arg;
 	//recv   ->buff
 	char buff[1024] = {0};
+=======
+    int sockfd = *(int *)arg;
+>>>>>>> origin/client1.0
     unsigned length = 0;
 	if((recv(fd, &length, sizeof(unsigned), 0)) > 0)
 	{
@@ -57,6 +73,7 @@ void sock_1_cb(int fd,short event,void *arg)
 	//强转
 	Pmpthread mthis = (Pmpthread)arg;
 
+<<<<<<< HEAD
 	//recv   cli_fd
     int cli_fd;
 	recv(fd,&cli_fd,sizeof(int),0);
@@ -71,6 +88,13 @@ void sock_1_cb(int fd,short event,void *arg)
 	//send(fd,      _event_map.size(),)
 	int mapsize = mthis->_event_map.size();
 	send(mthis->_sock_1, &mapsize, sizeof(int), 0);
+=======
+    if(pthread_create(&id,NULL,pth_fun, &sockfd) != 0)
+    {
+        cerr<<"pthread_create fail; errno:"<<errno<<endl;
+        return;
+    }
+>>>>>>> origin/client1.0
 }
 
 
