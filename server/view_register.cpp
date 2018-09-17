@@ -4,13 +4,16 @@
 #include "view.h"
 #include <mysql/mysql.h>
 #include <string.h>
+#include "redis.h"
 #include <sys/socket.h>
 #include <errno.h>
 using namespace std;
 
-view_register::view_register(void *mpcon)
+view_register::view_register(void *mpcon, char *ip)
 {
 	_mpcon = (MYSQL *)mpcon;
+    _redis = new Redis;
+    _redis->_ip = ip;
 }
 
 void view_register::process(Json::Value val, int cli_fd)
@@ -62,15 +65,15 @@ void view_register::responce()
 	if(_flag)
 	{
 		char buff[] = "注册成功";
-        unsigned len = sizeof(buff) / sizeof(buff[0]);
-        send(_cli_fd, &len, sizeof(unsigned), 0);
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 	else
 	{
 		char buff[] = "注册失败";
-        unsigned len = sizeof(buff) / sizeof(buff[0]);
-        send(_cli_fd, &len, sizeof(unsigned), 0);
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
 		send(_cli_fd, buff, strlen(buff), 0);
 	}
 }

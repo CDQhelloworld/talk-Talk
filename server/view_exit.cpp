@@ -4,19 +4,32 @@
 #include <errno.h>
 #include <string>
 #include <string.h>
+#include "redis.h"
 #include <sys/socket.h>
 using namespace std;
 
-
-view_exit::view_exit(void *mpcon)
+view_exit::view_exit(void *mpcon, char *ip)
 {
     _mpcon = (MYSQL *)mpcon;
+    _redis = new Redis;
+    _redis->_ip = ip;
 }
 
 void view_exit::process(Json::Value value, int cli_fd)
 {
     _cli_fd = cli_fd;
     _flag = false;
+
+    if(!_redis->connect(_redis->_ip))
+    {
+        cerr<<"redis connect fail;"<<endl;
+        _flag = false;
+        return;
+    }
+    if((_redis->get(value["name"].asString()).compare("Without this key-value!")) != 0)
+    {
+        _redis->del(value["name"].asString());
+    }
 
     MYSQL *mpcon = _mpcon;
     MYSQL_RES * mp_res;
@@ -36,6 +49,7 @@ void view_exit::process(Json::Value value, int cli_fd)
         cerr << "0 query fail; errno:" << errno << endl;
         return;
     }
+
     _flag = true;
 }
 
@@ -46,16 +60,16 @@ void view_exit::responce()
     {
         //退出成功
         char buff[] = "退出成功";
-        unsigned len = sizeof(buff) / sizeof(buff[0]);
-        send(_cli_fd, &len, sizeof(unsigned), 0);
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
     else
     {
         //退出失败
         char buff[] = "退出失败，请稍候重试";
-        unsigned len = sizeof(buff) / sizeof(buff[0]);
-        send(_cli_fd, &len, sizeof(unsigned), 0);
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
 }

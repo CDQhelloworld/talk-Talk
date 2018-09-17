@@ -12,12 +12,12 @@ extern pthread_mutex_t mutex;
 typedef class control
 {
 public:
-    control();
+    control(char *ip);
     //~control();
 
 	void handle(char *buff, int cli_fd);
 private:
     map<int,view*> _map;//model
-}Control,*PControl;
+}Control,*pControl;
 
 #endif

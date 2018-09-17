@@ -6,16 +6,40 @@
 #include <string.h>
 #include <json/json.h>
 #include <stdlib.h>
+#include "redis.h"
 using namespace std;
 
-view_talk_one::view_talk_one(void *mpcon)
+view_talk_one::view_talk_one(void *mpcon, char *ip)
 {
     _mpcon = (MYSQL *)mpcon;
+    _redis = new Redis;
+    _redis->_ip = ip;
+    if(!_redis->connect(_redis->_ip))
+    {
+        cerr<<"redis connect fail;"<<endl;
+        _flag = false;
+        return;
+    }
 }
 
 void view_talk_one::process(Json::Value val, int cli_fd)
 {
     _cli_fd = cli_fd;
+
+    string str_fd = _redis->get(val["sendto"].asString());
+    if(str_fd.compare("Without this key-value!") != 0)
+    {
+        int fd = atoi(str_fd.c_str());
+        if((send(fd, val["message"].asString().c_str(), val["message"].asString().size(), 0)) > 0)
+        {
+            _flag = true;
+            return;
+        }
+        else
+        {
+            _flag = false;
+        }
+    }
 
     MYSQL *mpcon = _mpcon;
     MYSQL_RES *mp_res;
@@ -53,12 +77,17 @@ void view_talk_one::process(Json::Value val, int cli_fd)
     }
     else
     {
+        _redis->set(val["sendto"].asString(), mp_row[0]);
         unsigned len = val["message"].asString().size();
         send(atoi(mp_row[0]), &len, sizeof(unsigned), 0);
         if((send(atoi(mp_row[0]), val["message"].asString().c_str(), val["message"].asString().size(), 0)) < 0)
+        {
             _flag = false;
+        }
         else
+        {
             _flag = true;
+        }
     }
 }
 
@@ -67,15 +96,15 @@ void view_talk_one::responce()
     if(_flag)
     {
         char buff[] = "发送成功";
-        unsigned len = sizeof(buff) / sizeof(buff[0]);
-        send(_cli_fd, &len, sizeof(unsigned), 0);
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
     else
     {
         char buff[] = "发送失败，请稍后重试";
-        unsigned len = sizeof(buff) / sizeof(buff[0]);
-        send(_cli_fd, &len, sizeof(unsigned), 0);
+        unsigned len = sizeof(buff)/sizeof(buff[0]);
+        send(_cli_fd, (char *)&len, sizeof(unsigned), 0);
         send(_cli_fd, buff, strlen(buff), 0);
     }
 }

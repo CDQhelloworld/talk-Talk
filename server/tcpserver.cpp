@@ -12,10 +12,9 @@
 #include<unistd.h>
 #include<event.h>
 #include<memory.h>
-#include<time.h>
 using namespace std;
 
-Tcpserver::Tcpserver(char *ip,int port,int pth_num):_pth_num(pth_num)
+Tcpserver::Tcpserver(char *ip,int port,int pth_num):_pth_num(pth_num),_ip(ip),_port(port)
 {
 	//创建服务器
 	int sockfd = socket(AF_INET,SOCK_STREAM,0);
@@ -51,6 +50,8 @@ void sock_fd_cb(int fd, short event, void *arg)
 	int len = sizeof(caddr);
 	int cli_fd = accept(fd, (struct sockaddr *)&caddr, (socklen_t *)&len);
 
+    cout << "client fd="<< cli_fd <<"        port=" << ntohs(caddr.sin_port) << "       ip=" << inet_ntoa(caddr.sin_addr) << endl;
+
 	//调查map表拿最小访问量的子线程套接字
 	pTcpsever mthis = (pTcpsever)arg;
 	typedef map<unsigned, unsigned>::iterator iterator;
@@ -66,7 +67,6 @@ void sock_fd_cb(int fd, short event, void *arg)
 			min = (*ser_mapit).second;
 		}
 	}
-    
 
 	//给子线程发送
 	if(-1 == (send(minIndex, (char *)&cli_fd, sizeof(int), 0)))
@@ -81,7 +81,7 @@ void Tcpserver::run()
 	create_socket_pair();
 
 	//启动线程
-	create_pth(_pth_num);
+	create_pth(_pth_num, _ip);
 
 	//将监听套接子libevent
 	struct event *ev_socketfd = event_new(_base, _listen_fd, EV_READ|EV_PERSIST, sock_fd_cb, this);
@@ -93,11 +93,11 @@ void Tcpserver::run()
 
 
 
-void Tcpserver::create_pth(int pth_num)
+void Tcpserver::create_pth(int pth_num, char *ip)
 {
 	for(int i = 0;i<pth_num;++i)
 	{
-	    new mpthread(((_socket_pair_base[i]).sockfd)[1]);
+	    new mpthread(((_socket_pair_base[i]).sockfd)[1], ip);
 	}
 }
 

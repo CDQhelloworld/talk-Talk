@@ -5,16 +5,18 @@
 #include<event.h>
 #include<sys/socket.h>
 #include<map>
-#include<time.h>
 #include"control.h"
 using namespace std;
 
 void *pth_run(void *arg);
 
-mpthread::mpthread(int sock_1)
+mpthread::mpthread(int sock_1, char *ip)
 {
 	_sock_1 = sock_1;
 	
+    //生成控制台
+    _control = new control(ip);
+
 	//启动子线程
     pthread_t id;
     if((pthread_create(&id,NULL,pth_run,this)) != 0)
@@ -22,8 +24,6 @@ mpthread::mpthread(int sock_1)
         cerr<<"pthread_create error:"<<errno<<endl;
         return;
     }
-
-	//->pth_run(this)
 }
 
 void cli_cb(int fd,short event,void* arg)
@@ -36,7 +36,7 @@ void cli_cb(int fd,short event,void* arg)
 	{
         recv(fd, buff, length, 0);
 		//buff->contral 
-		mthis->_control.handle(buff, fd);
+		mthis->_control->handle(buff, fd);
 	}
     else
     {
